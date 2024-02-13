@@ -1,15 +1,28 @@
 import React from 'react';
-import {StyleSheet, Text, View, FlatList} from 'react-native';
+import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import {SAMPLE_DATA} from '../data/sampleData';
 
 type TaskItemProps = {
   task: string;
   date: string | undefined;
   time: string | undefined;
+  onTaskItemPressed: () => void;
 };
 
-const TaskItem = ({task, date, time}: TaskItemProps): React.JSX.Element => (
-  <View style={styles.taskItem}>
+interface TasksListProps {
+  onTaskItemPressed: () => void;
+}
+
+const TaskItem = ({
+  task,
+  date,
+  time,
+  onTaskItemPressed,
+}: TaskItemProps): React.JSX.Element => (
+  <TouchableOpacity
+    style={styles.taskItem}
+    onPress={onTaskItemPressed}
+    activeOpacity={0.5}>
     <Text style={styles.taskText}>{task}</Text>
     {(date || time) && (
       <View style={styles.dateTimeWrapper}>
@@ -17,16 +30,21 @@ const TaskItem = ({task, date, time}: TaskItemProps): React.JSX.Element => (
         <Text style={styles.dateTimeText}>{time}</Text>
       </View>
     )}
-  </View>
+  </TouchableOpacity>
 );
 
-const TasksList = (): React.JSX.Element => {
+const TasksList = ({onTaskItemPressed}: TasksListProps): React.JSX.Element => {
   return (
     <View style={styles.listWrapper}>
       <FlatList
         data={SAMPLE_DATA}
         renderItem={({item}) => (
-          <TaskItem task={item.task} date={item.date} time={item.time} />
+          <TaskItem
+            task={item.task}
+            date={item.date}
+            time={item.time}
+            onTaskItemPressed={onTaskItemPressed}
+          />
         )}
         keyExtractor={item => item.id.toString()}
         scrollEnabled={false}
