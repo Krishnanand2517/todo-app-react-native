@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {RootStackParamList} from '../App';
 import TasksList from '../components/TasksList';
@@ -30,6 +32,27 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
 };
 
 const Home = ({navigation}: HomeProps): React.JSX.Element => {
+  const isFocused = useIsFocused();
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const value = await AsyncStorage.getItem('tasks');
+        if (value !== null) {
+          setTasks(JSON.parse(value));
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('Failed to fetch tasks from storage');
+        }
+      }
+    };
+
+    fetchTasks();
+  }, [isFocused]);
+
   const onAddButtonPressed = () => navigation.navigate('AddTask');
   const onTaskItemPressed = (task: Task) =>
     navigation.navigate('EditTask', {task});
@@ -43,7 +66,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
             <AddButton onAddButtonPressed={onAddButtonPressed} />
           </View>
 
-          <TasksList onTaskItemPressed={onTaskItemPressed} />
+          <TasksList onTaskItemPressed={onTaskItemPressed} tasks={tasks} />
         </View>
       </ScrollView>
     </SafeAreaView>

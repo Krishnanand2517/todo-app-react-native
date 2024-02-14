@@ -8,6 +8,8 @@ import {
   TextInput,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -73,7 +75,37 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [timeModalOpen, setTimeModalOpen] = useState(false);
 
-  const onDoneButtonPressed = () => navigation.navigate('Home');
+  const onDoneButtonPressed = async () => {
+    if (taskContent !== '') {
+      try {
+        const newTask: Task = {
+          id: uuid.v4().toString(),
+          task: taskContent,
+          date,
+          time,
+        };
+
+        const value = await AsyncStorage.getItem('tasks');
+        if (value !== null) {
+          const allTasks = JSON.parse(value);
+
+          await AsyncStorage.setItem(
+            'tasks',
+            JSON.stringify(allTasks.concat(newTask)),
+          );
+        } else {
+          await AsyncStorage.setItem('tasks', JSON.stringify([newTask]));
+        }
+
+        navigation.navigate('Home');
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('Failed to store the task into phone memory');
+        }
+      }
+    }
+  };
+
   const onAddDateButtonPressed = () => setDateModalOpen(true);
   const onAddTimeButtonPressed = () => setTimeModalOpen(true);
 
