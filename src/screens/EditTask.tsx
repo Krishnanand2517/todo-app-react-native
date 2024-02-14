@@ -66,10 +66,12 @@ const AddTimeButton = ({
   );
 };
 
-const EditTask = ({navigation}: EditTaskProps): React.JSX.Element => {
-  const [taskContent, setTaskContent] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+const EditTask = ({navigation, route}: EditTaskProps): React.JSX.Element => {
+  const {task} = route.params;
+
+  const [taskContent, setTaskContent] = useState(task.task);
+  const [date, setDate] = useState(task.date);
+  const [time, setTime] = useState(task.time);
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [timeModalOpen, setTimeModalOpen] = useState(false);
 

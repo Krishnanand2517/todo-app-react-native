@@ -31,7 +31,8 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
 
 const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onAddButtonPressed = () => navigation.navigate('AddTask');
-  const onTaskItemPressed = () => navigation.navigate('EditTask');
+  const onTaskItemPressed = (task: Task) =>
+    navigation.navigate('EditTask', {task});
 
   return (
     <SafeAreaView style={styles.screen}>

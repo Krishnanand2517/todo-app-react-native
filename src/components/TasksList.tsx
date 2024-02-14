@@ -3,17 +3,19 @@ import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import {SAMPLE_DATA} from '../data/sampleData';
 
 type TaskItemProps = {
+  id: string;
   task: string;
   date: string | undefined;
   time: string | undefined;
-  onTaskItemPressed: () => void;
+  onTaskItemPressed: (task: Task) => void;
 };
 
 interface TasksListProps {
-  onTaskItemPressed: () => void;
+  onTaskItemPressed: (task: Task) => void;
 }
 
 const TaskItem = ({
+  id,
   task,
   date,
   time,
@@ -21,7 +23,7 @@ const TaskItem = ({
 }: TaskItemProps): React.JSX.Element => (
   <TouchableOpacity
     style={styles.taskItem}
-    onPress={onTaskItemPressed}
+    onPress={() => onTaskItemPressed({id, task, date, time})}
     activeOpacity={0.5}>
     <Text style={styles.taskText}>{task}</Text>
     {(date || time) && (
@@ -40,6 +42,7 @@ const TasksList = ({onTaskItemPressed}: TasksListProps): React.JSX.Element => {
         data={SAMPLE_DATA}
         renderItem={({item}) => (
           <TaskItem
+            id={item.id.toString()}
             task={item.task}
             date={item.date}
             time={item.time}

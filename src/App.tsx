@@ -9,7 +9,7 @@ import EditTask from './screens/EditTask';
 export type RootStackParamList = {
   Home: undefined;
   AddTask: undefined;
-  EditTask: undefined;
+  EditTask: {task: Task};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
