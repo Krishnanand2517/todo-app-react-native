@@ -10,6 +10,7 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {RootStackParamList} from '../App';
 
@@ -75,7 +76,41 @@ const EditTask = ({navigation, route}: EditTaskProps): React.JSX.Element => {
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [timeModalOpen, setTimeModalOpen] = useState(false);
 
-  const onDoneButtonPressed = () => navigation.navigate('Home');
+  const onDoneButtonPressed = async () => {
+    if (taskContent !== '') {
+      try {
+        const editedTask: Task = {
+          id: task.id,
+          task: taskContent,
+          date,
+          time,
+        };
+
+        const value = await AsyncStorage.getItem('tasks');
+        if (value !== null) {
+          const allTasks = JSON.parse(value);
+
+          if (Array.isArray(allTasks)) {
+            await AsyncStorage.setItem(
+              'tasks',
+              JSON.stringify(
+                allTasks.map((item: Task) =>
+                  item.id === editedTask.id ? editedTask : item,
+                ),
+              ),
+            );
+          }
+        }
+
+        navigation.navigate('Home');
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('Failed to edit the task');
+        }
+      }
+    }
+  };
+
   const onAddDateButtonPressed = () => setDateModalOpen(true);
   const onAddTimeButtonPressed = () => setTimeModalOpen(true);
 

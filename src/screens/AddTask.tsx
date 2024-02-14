@@ -89,10 +89,12 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
         if (value !== null) {
           const allTasks = JSON.parse(value);
 
-          await AsyncStorage.setItem(
-            'tasks',
-            JSON.stringify(allTasks.concat(newTask)),
-          );
+          if (Array.isArray(allTasks)) {
+            await AsyncStorage.setItem(
+              'tasks',
+              JSON.stringify(allTasks.concat(newTask)),
+            );
+          }
         } else {
           await AsyncStorage.setItem('tasks', JSON.stringify([newTask]));
         }
