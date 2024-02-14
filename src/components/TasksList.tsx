@@ -55,6 +55,7 @@ const TasksList = ({
           )}
           keyExtractor={item => item.id.toString()}
           scrollEnabled={false}
+          inverted
         />
       ) : (
         <View style={styles.noTaskTextWrapper}>
@@ -72,9 +73,6 @@ export default TasksList;
 const styles = StyleSheet.create({
   listWrapper: {
     marginTop: 36,
-  },
-  taskList: {
-    marginBottom: 256,
   },
   taskItem: {
     backgroundColor: '#CAF0F8',
