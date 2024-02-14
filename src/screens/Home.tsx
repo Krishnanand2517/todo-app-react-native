@@ -34,7 +34,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onTaskItemPressed = () => navigation.navigate('EditTask');
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.screen}>
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.headWrapper}>
@@ -52,6 +52,10 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
 export default Home;
 
 const styles = StyleSheet.create({
+  screen: {
+    height: '100%',
+    backgroundColor: '#FFF6E9',
+  },
   container: {
     marginTop: 64,
     paddingHorizontal: 24,
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#33B249',
     paddingHorizontal: 20,
     paddingVertical: 8,
-    borderRadius: 4,
+    borderRadius: 18,
     elevation: 5,
   },
   buttonText: {

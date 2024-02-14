@@ -78,81 +78,83 @@ const EditTask = ({navigation}: EditTaskProps): React.JSX.Element => {
   const onAddTimeButtonPressed = () => setTimeModalOpen(true);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headWrapper}>
-        <Text style={styles.headingText}>Edit Task</Text>
-        <DoneButton onDoneButtonPressed={onDoneButtonPressed} />
-      </View>
-      <View style={styles.taskInputWrapper}>
-        <TextInput
-          style={styles.taskInput}
-          value={taskContent}
-          onChangeText={setTaskContent}
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.container}>
+        <View style={styles.headWrapper}>
+          <Text style={styles.headingText}>Edit Task</Text>
+          <DoneButton onDoneButtonPressed={onDoneButtonPressed} />
+        </View>
+        <View style={styles.taskInputWrapper}>
+          <TextInput
+            style={styles.taskInput}
+            value={taskContent}
+            onChangeText={setTaskContent}
+          />
+        </View>
+
+        <View style={styles.dateTimeButtonsWrapper}>
+          <View style={styles.dateTimeSection}>
+            <AddDateButton onAddDateButtonPressed={onAddDateButtonPressed} />
+            {date && (
+              <View style={styles.dateTimeTextWrapper}>
+                <Text style={styles.dateTimeText}>{date}</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.dateTimeSection}>
+            <AddTimeButton onAddTimeButtonPressed={onAddTimeButtonPressed} />
+            {time && (
+              <View style={styles.dateTimeTextWrapper}>
+                <Text style={styles.dateTimeText}>{time}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        <DatePicker
+          modal
+          mode="date"
+          open={dateModalOpen}
+          date={new Date()}
+          onConfirm={selectedDate => {
+            setDateModalOpen(false);
+            setDate(
+              selectedDate
+                .toLocaleDateString('en-IN', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })
+                .split('-')
+                .join(' '),
+            );
+          }}
+          onCancel={() => {
+            setDateModalOpen(false);
+          }}
+        />
+
+        <DatePicker
+          modal
+          mode="time"
+          open={timeModalOpen}
+          date={new Date()}
+          onConfirm={selectedDate => {
+            setTimeModalOpen(false);
+            setTime(
+              selectedDate.toLocaleTimeString('en-IN', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              }),
+            );
+          }}
+          onCancel={() => {
+            setTimeModalOpen(false);
+          }}
         />
       </View>
-
-      <View style={styles.dateTimeButtonsWrapper}>
-        <View style={styles.dateTimeSection}>
-          <AddDateButton onAddDateButtonPressed={onAddDateButtonPressed} />
-          {date && (
-            <View style={styles.dateTimeTextWrapper}>
-              <Text style={styles.dateTimeText}>{date}</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.dateTimeSection}>
-          <AddTimeButton onAddTimeButtonPressed={onAddTimeButtonPressed} />
-          {time && (
-            <View style={styles.dateTimeTextWrapper}>
-              <Text style={styles.dateTimeText}>{time}</Text>
-            </View>
-          )}
-        </View>
-      </View>
-
-      <DatePicker
-        modal
-        mode="date"
-        open={dateModalOpen}
-        date={new Date()}
-        onConfirm={selectedDate => {
-          setDateModalOpen(false);
-          setDate(
-            selectedDate
-              .toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })
-              .split('-')
-              .join(' '),
-          );
-        }}
-        onCancel={() => {
-          setDateModalOpen(false);
-        }}
-      />
-
-      <DatePicker
-        modal
-        mode="time"
-        open={timeModalOpen}
-        date={new Date()}
-        onConfirm={selectedDate => {
-          setTimeModalOpen(false);
-          setTime(
-            selectedDate.toLocaleTimeString('en-IN', {
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: true,
-            }),
-          );
-        }}
-        onCancel={() => {
-          setTimeModalOpen(false);
-        }}
-      />
     </SafeAreaView>
   );
 };
@@ -160,6 +162,10 @@ const EditTask = ({navigation}: EditTaskProps): React.JSX.Element => {
 export default EditTask;
 
 const styles = StyleSheet.create({
+  screen: {
+    height: '100%',
+    backgroundColor: '#FFF6E9',
+  },
   container: {
     marginTop: 64,
     paddingHorizontal: 24,
