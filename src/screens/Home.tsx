@@ -57,6 +57,24 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onTaskItemPressed = (task: Task) =>
     navigation.navigate('EditTask', {task});
 
+  const onDelete = async (taskId: string) => {
+    try {
+      if (tasks.length > 0) {
+        setTasks(tasks.filter((item: Task) => item.id !== taskId));
+
+        await AsyncStorage.setItem(
+          'tasks',
+          JSON.stringify(tasks.filter((item: Task) => item.id !== taskId)),
+        );
+        console.log('Deleted successfully!');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Failed to delete the task');
+      }
+    }
+  };
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView>
@@ -66,7 +84,11 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
             <AddButton onAddButtonPressed={onAddButtonPressed} />
           </View>
 
-          <TasksList onTaskItemPressed={onTaskItemPressed} tasks={tasks} />
+          <TasksList
+            onTaskItemPressed={onTaskItemPressed}
+            tasks={tasks}
+            onDelete={onDelete}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

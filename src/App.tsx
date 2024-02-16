@@ -1,6 +1,7 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 import Home from './screens/Home';
 import AddTask from './screens/AddTask';
@@ -16,15 +17,17 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = (): React.JSX.Element => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="AddTask" component={AddTask} />
-        <Stack.Screen name="EditTask" component={EditTask} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="AddTask" component={AddTask} />
+          <Stack.Screen name="EditTask" component={EditTask} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
