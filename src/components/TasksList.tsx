@@ -72,8 +72,8 @@ const TaskItem = ({
       renderLeftActions={(_progress, dragX) => renderActions(dragX, 'left')}
       renderRightActions={(_progress, dragX) => renderActions(dragX, 'right')}
       onSwipeableWillOpen={onSwipeableWillOpen}
-      // overshootFriction={8}
-    >
+      leftThreshold={150}
+      rightThreshold={150}>
       <Animated.View style={{transform: [{translateX: swipeAnim}]}}>
         <TouchableOpacity
           style={styles.taskItem}
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     borderRadius: 16,
     marginVertical: 12,
+    marginHorizontal: 24,
     paddingHorizontal: 12,
     paddingVertical: 12,
   },
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
   deleteIconWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 24,
   },
   deleteIcon: {
     width: 50,
@@ -170,6 +172,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#0A79DF',
     borderRadius: 8,
+    marginHorizontal: 24,
     paddingVertical: 16,
     paddingHorizontal: 8,
   },

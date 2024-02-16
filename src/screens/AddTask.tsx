@@ -105,6 +105,8 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
           console.log('Failed to store the task into phone memory');
         }
       }
+    } else {
+      navigation.navigate('Home');
     }
   };
 

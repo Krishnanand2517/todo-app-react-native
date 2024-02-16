@@ -66,7 +66,6 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
           'tasks',
           JSON.stringify(tasks.filter((item: Task) => item.id !== taskId)),
         );
-        console.log('Deleted successfully!');
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -104,12 +103,13 @@ const styles = StyleSheet.create({
   },
   container: {
     marginTop: 64,
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
   },
   headWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 24,
   },
   headingText: {
     fontWeight: '700',
