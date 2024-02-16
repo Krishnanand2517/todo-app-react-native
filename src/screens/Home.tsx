@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  LayoutAnimation,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useIsFocused} from '@react-navigation/native';
@@ -42,6 +43,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         const value = await AsyncStorage.getItem('tasks');
         if (value !== null) {
           setTasks(JSON.parse(value));
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -57,12 +59,12 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onTaskItemPressed = (task: Task) =>
     navigation.navigate('EditTask', {task});
 
-  const onDelete = async (taskId: string) => {
+  const onDelete = (taskId: string) => {
     try {
       if (tasks.length > 0) {
         setTasks(tasks.filter((item: Task) => item.id !== taskId));
 
-        await AsyncStorage.setItem(
+        AsyncStorage.setItem(
           'tasks',
           JSON.stringify(tasks.filter((item: Task) => item.id !== taskId)),
         );
@@ -103,7 +105,6 @@ const styles = StyleSheet.create({
   },
   container: {
     marginTop: 64,
-    // paddingHorizontal: 24,
   },
   headWrapper: {
     flexDirection: 'row',

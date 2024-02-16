@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Animated,
+  LayoutAnimation,
 } from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
 
@@ -16,13 +17,13 @@ type TaskItemProps = {
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
-  onDelete: (taskId: string) => Promise<void>;
+  handleDelete: (taskId: string) => void;
 };
 
 interface TasksListProps {
   onTaskItemPressed: (task: Task) => void;
   tasks: Task[];
-  onDelete: (taskId: string) => Promise<void>;
+  onDelete: (taskId: string) => void;
 }
 
 const TaskItem = ({
@@ -31,19 +32,19 @@ const TaskItem = ({
   date,
   time,
   onTaskItemPressed,
-  onDelete,
+  handleDelete,
 }: TaskItemProps): React.JSX.Element => {
   const swipeAnim = useRef(new Animated.Value(0)).current;
 
   const onSwipeableWillOpen = (direction: 'left' | 'right') => {
-    const moveTo = direction === 'left' ? 9999 : -9999;
+    const moveTo = direction === 'left' ? 3000 : -3000;
 
     Animated.timing(swipeAnim, {
       toValue: moveTo,
-      duration: 1500,
+      duration: 500,
       useNativeDriver: true,
     }).start(() => {
-      onDelete(id);
+      handleDelete(id);
     });
   };
 
@@ -72,8 +73,8 @@ const TaskItem = ({
       renderLeftActions={(_progress, dragX) => renderActions(dragX, 'left')}
       renderRightActions={(_progress, dragX) => renderActions(dragX, 'right')}
       onSwipeableWillOpen={onSwipeableWillOpen}
-      leftThreshold={150}
-      rightThreshold={150}>
+      leftThreshold={120}
+      rightThreshold={120}>
       <Animated.View style={{transform: [{translateX: swipeAnim}]}}>
         <TouchableOpacity
           style={styles.taskItem}
@@ -97,6 +98,20 @@ const TasksList = ({
   tasks,
   onDelete,
 }: TasksListProps): React.JSX.Element => {
+  const handleDelete = (taskId: string) => {
+    onDelete(taskId);
+
+    LayoutAnimation.configureNext({
+      duration: 300,
+      update: {type: LayoutAnimation.Types.easeInEaseOut},
+      delete: {
+        duration: 100,
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+    });
+  };
+
   return (
     <View style={styles.listWrapper}>
       {tasks.length > 0 ? (
@@ -109,7 +124,7 @@ const TasksList = ({
               date={item.date}
               time={item.time}
               onTaskItemPressed={onTaskItemPressed}
-              onDelete={onDelete}
+              handleDelete={handleDelete}
             />
           )}
           keyExtractor={item => item.id.toString()}
