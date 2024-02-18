@@ -82,6 +82,7 @@ const EditTask = ({navigation, route}: EditTaskProps): React.JSX.Element => {
         const editedTask: Task = {
           id: task.id,
           task: taskContent,
+          bgColor: task.bgColor,
           date,
           time,
         };

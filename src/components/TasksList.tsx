@@ -14,6 +14,7 @@ import {Swipeable} from 'react-native-gesture-handler';
 type TaskItemProps = {
   id: string;
   task: string;
+  bgColor: string;
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
@@ -29,6 +30,7 @@ interface TasksListProps {
 const TaskItem = ({
   id,
   task,
+  bgColor,
   date,
   time,
   onTaskItemPressed,
@@ -77,8 +79,8 @@ const TaskItem = ({
       rightThreshold={120}>
       <Animated.View style={{transform: [{translateX: swipeAnim}]}}>
         <TouchableOpacity
-          style={styles.taskItem}
-          onPress={() => onTaskItemPressed({id, task, date, time})}
+          style={[styles.taskItem, {backgroundColor: bgColor}]}
+          onPress={() => onTaskItemPressed({id, task, bgColor, date, time})}
           activeOpacity={0.5}>
           <Text style={styles.taskText}>{task}</Text>
           {(date || time) && (
@@ -121,6 +123,7 @@ const TasksList = ({
             <TaskItem
               id={item.id.toString()}
               task={item.task}
+              bgColor={item.bgColor}
               date={item.date}
               time={item.time}
               onTaskItemPressed={onTaskItemPressed}
@@ -149,7 +152,6 @@ const styles = StyleSheet.create({
     marginTop: 36,
   },
   taskItem: {
-    backgroundColor: '#CAF0F8',
     borderWidth: 2,
     borderColor: '#000000',
     borderRadius: 16,
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
   },
   dateTimeText: {
     fontSize: 12,
-    color: '#8D99AE',
+    color: '#3D4654',
   },
   noTaskTextWrapper: {
     marginTop: 48,

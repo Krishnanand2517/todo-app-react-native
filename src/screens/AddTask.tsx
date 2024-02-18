@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/Feather';
 
+import {bgColors} from '../data/taskItemBgColors';
 import {RootStackParamList} from '../App';
 
 type AddTaskProps = NativeStackScreenProps<RootStackParamList, 'AddTask'>;
@@ -77,10 +78,15 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
 
   const onDoneButtonPressed = async () => {
     if (taskContent !== '') {
+      // Randomly choosing bgColor
+      const randomIndex = Math.floor(Math.random() * bgColors.length);
+      const randomColor = bgColors[randomIndex];
+
       try {
         const newTask: Task = {
           id: uuid.v4().toString(),
           task: taskContent,
+          bgColor: randomColor,
           date,
           time,
         };
