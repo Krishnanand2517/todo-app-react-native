@@ -10,11 +10,13 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Feather';
 
 type TaskItemProps = {
   id: string;
   task: string;
   bgColor: string;
+  completed: boolean;
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
@@ -31,6 +33,7 @@ const TaskItem = ({
   id,
   task,
   bgColor,
+  completed,
   date,
   time,
   onTaskItemPressed,
@@ -79,10 +82,31 @@ const TaskItem = ({
       rightThreshold={120}>
       <Animated.View style={{transform: [{translateX: swipeAnim}]}}>
         <TouchableOpacity
-          style={[styles.taskItem, {backgroundColor: bgColor}]}
-          onPress={() => onTaskItemPressed({id, task, bgColor, date, time})}
+          style={[
+            styles.taskItem,
+            {backgroundColor: bgColor},
+            completed && {opacity: 0.6},
+          ]}
+          onPress={() =>
+            onTaskItemPressed({id, task, bgColor, completed, date, time})
+          }
           activeOpacity={0.5}>
-          <Text style={styles.taskText}>{task}</Text>
+          <View style={styles.taskTextWrapper}>
+            <View style={styles.taskCompleteCircle}>
+              {completed ? (
+                <Icon name="check-circle" size={20} color="#000" />
+              ) : (
+                <Icon name="circle" size={20} color="#000" />
+              )}
+            </View>
+            <Text
+              style={[
+                styles.taskText,
+                completed && {textDecorationLine: 'line-through'},
+              ]}>
+              {task}
+            </Text>
+          </View>
           {(date || time) && (
             <View style={styles.dateTimeWrapper}>
               <Text style={styles.dateTimeText}>{date}</Text>
@@ -124,6 +148,7 @@ const TasksList = ({
               id={item.id.toString()}
               task={item.task}
               bgColor={item.bgColor}
+              completed={item.completed}
               date={item.date}
               time={item.time}
               onTaskItemPressed={onTaskItemPressed}
@@ -141,6 +166,28 @@ const TasksList = ({
           </Text>
         </View>
       )}
+
+      <View style={styles.completedSection}>
+        <Text style={styles.completedHeader}>Completed</Text>
+        <FlatList
+          data={tasks}
+          renderItem={({item}) => (
+            <TaskItem
+              id={item.id.toString()}
+              task={item.task}
+              bgColor={item.bgColor}
+              completed={true}
+              date={item.date}
+              time={item.time}
+              onTaskItemPressed={onTaskItemPressed}
+              handleDelete={handleDelete}
+            />
+          )}
+          keyExtractor={item => item.id.toString()}
+          scrollEnabled={false}
+          inverted
+        />
+      </View>
     </View>
   );
 };
@@ -159,6 +206,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     paddingHorizontal: 12,
     paddingVertical: 12,
+  },
+  taskTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  taskCompleteCircle: {
+    paddingBottom: 10,
+    paddingRight: 12,
   },
   taskText: {
     fontSize: 16,
@@ -181,6 +236,19 @@ const styles = StyleSheet.create({
   dateTimeText: {
     fontSize: 12,
     color: '#3D4654',
+  },
+  completedSection: {
+    marginTop: 48,
+    marginBottom: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#D3D3D3',
+  },
+  completedHeader: {
+    marginVertical: 12,
+    marginHorizontal: 24,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2B2D42',
   },
   noTaskTextWrapper: {
     marginTop: 48,
