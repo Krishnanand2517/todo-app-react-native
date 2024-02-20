@@ -149,11 +149,21 @@ const TasksList = ({
 
   const handleTaskCirclePress = (taskId: string) => {
     onToggleComplete(taskId);
+
+    LayoutAnimation.configureNext({
+      duration: 300,
+      update: {type: LayoutAnimation.Types.easeInEaseOut},
+      delete: {
+        duration: 100,
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+    });
   };
 
   return (
     <View style={styles.listWrapper}>
-      {tasks.length > 0 ? (
+      {incompleteTasks.length > 0 ? (
         <FlatList
           data={incompleteTasks}
           renderItem={({item}) => (

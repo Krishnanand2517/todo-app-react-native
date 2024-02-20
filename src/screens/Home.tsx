@@ -78,20 +78,13 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
 
   const onToggleComplete = (taskId: string) => {
     try {
-      AsyncStorage.setItem(
-        'tasks',
-        JSON.stringify(
-          tasks.map((item: Task) =>
-            item.id === taskId ? {...item, completed: !item.completed} : item,
-          ),
-        ),
+      const updatedTasks = tasks.map((item: Task) =>
+        item.id === taskId ? {...item, completed: !item.completed} : item,
       );
 
-      setTasks(
-        tasks.map((item: Task) =>
-          item.id === taskId ? {...item, completed: !item.completed} : item,
-        ),
-      );
+      AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+      setTasks(updatedTasks);
     } catch (error) {
       if (error instanceof Error) {
         console.log('Failed to mark task as complete');
