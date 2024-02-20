@@ -62,16 +62,39 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onDelete = (taskId: string) => {
     try {
       if (tasks.length > 0) {
-        setTasks(tasks.filter((item: Task) => item.id !== taskId));
-
         AsyncStorage.setItem(
           'tasks',
           JSON.stringify(tasks.filter((item: Task) => item.id !== taskId)),
         );
+
+        setTasks(tasks.filter((item: Task) => item.id !== taskId));
       }
     } catch (error) {
       if (error instanceof Error) {
         console.log('Failed to delete the task');
+      }
+    }
+  };
+
+  const onToggleComplete = (taskId: string) => {
+    try {
+      AsyncStorage.setItem(
+        'tasks',
+        JSON.stringify(
+          tasks.map((item: Task) =>
+            item.id === taskId ? {...item, completed: !item.completed} : item,
+          ),
+        ),
+      );
+
+      setTasks(
+        tasks.map((item: Task) =>
+          item.id === taskId ? {...item, completed: !item.completed} : item,
+        ),
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Failed to mark task as complete');
       }
     }
   };
@@ -89,6 +112,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
             onTaskItemPressed={onTaskItemPressed}
             tasks={tasks}
             onDelete={onDelete}
+            onToggleComplete={onToggleComplete}
           />
         </View>
       </ScrollView>

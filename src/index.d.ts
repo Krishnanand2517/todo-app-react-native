@@ -6,3 +6,5 @@ interface Task {
   date?: string;
   time?: string;
 }
+
+type EditableTask = Omit<Task, 'bgColor' | 'completed'>;

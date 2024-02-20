@@ -79,10 +79,9 @@ const EditTask = ({navigation, route}: EditTaskProps): React.JSX.Element => {
   const onDoneButtonPressed = async () => {
     if (taskContent !== '') {
       try {
-        const editedTask: Task = {
+        const editedTask: EditableTask = {
           id: task.id,
           task: taskContent,
-          bgColor: task.bgColor,
           date,
           time,
         };
@@ -96,7 +95,9 @@ const EditTask = ({navigation, route}: EditTaskProps): React.JSX.Element => {
               'tasks',
               JSON.stringify(
                 allTasks.map((item: Task) =>
-                  item.id === editedTask.id ? editedTask : item,
+                  item.id === editedTask.id
+                    ? {...item, task: taskContent, date, time}
+                    : item,
                 ),
               ),
             );

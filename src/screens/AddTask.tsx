@@ -87,6 +87,7 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
           id: uuid.v4().toString(),
           task: taskContent,
           bgColor: randomColor,
+          completed: false,
           date,
           time,
         };

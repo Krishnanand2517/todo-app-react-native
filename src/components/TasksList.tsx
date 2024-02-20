@@ -21,12 +21,14 @@ type TaskItemProps = {
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
   handleDelete: (taskId: string) => void;
+  handleTaskCirclePress: (taskId: string) => void;
 };
 
 interface TasksListProps {
   onTaskItemPressed: (task: Task) => void;
   tasks: Task[];
   onDelete: (taskId: string) => void;
+  onToggleComplete: (taskId: string) => void;
 }
 
 const TaskItem = ({
@@ -38,6 +40,7 @@ const TaskItem = ({
   time,
   onTaskItemPressed,
   handleDelete,
+  handleTaskCirclePress,
 }: TaskItemProps): React.JSX.Element => {
   const swipeAnim = useRef(new Animated.Value(0)).current;
 
@@ -92,13 +95,15 @@ const TaskItem = ({
           }
           activeOpacity={0.5}>
           <View style={styles.taskTextWrapper}>
-            <View style={styles.taskCompleteCircle}>
+            <TouchableOpacity
+              style={styles.taskCompleteCircle}
+              onPress={() => handleTaskCirclePress(id)}>
               {completed ? (
                 <Icon name="check-circle" size={20} color="#000" />
               ) : (
                 <Icon name="circle" size={20} color="#000" />
               )}
-            </View>
+            </TouchableOpacity>
             <Text
               style={[
                 styles.taskText,
@@ -123,7 +128,11 @@ const TasksList = ({
   onTaskItemPressed,
   tasks,
   onDelete,
+  onToggleComplete,
 }: TasksListProps): React.JSX.Element => {
+  const incompleteTasks = tasks.filter(task => task.completed === false);
+  const completedTasks = tasks.filter(task => task.completed === true);
+
   const handleDelete = (taskId: string) => {
     onDelete(taskId);
 
@@ -138,11 +147,15 @@ const TasksList = ({
     });
   };
 
+  const handleTaskCirclePress = (taskId: string) => {
+    onToggleComplete(taskId);
+  };
+
   return (
     <View style={styles.listWrapper}>
       {tasks.length > 0 ? (
         <FlatList
-          data={tasks}
+          data={incompleteTasks}
           renderItem={({item}) => (
             <TaskItem
               id={item.id.toString()}
@@ -153,6 +166,7 @@ const TasksList = ({
               time={item.time}
               onTaskItemPressed={onTaskItemPressed}
               handleDelete={handleDelete}
+              handleTaskCirclePress={handleTaskCirclePress}
             />
           )}
           keyExtractor={item => item.id.toString()}
@@ -169,24 +183,33 @@ const TasksList = ({
 
       <View style={styles.completedSection}>
         <Text style={styles.completedHeader}>Completed</Text>
-        <FlatList
-          data={tasks}
-          renderItem={({item}) => (
-            <TaskItem
-              id={item.id.toString()}
-              task={item.task}
-              bgColor={item.bgColor}
-              completed={true}
-              date={item.date}
-              time={item.time}
-              onTaskItemPressed={onTaskItemPressed}
-              handleDelete={handleDelete}
-            />
-          )}
-          keyExtractor={item => item.id.toString()}
-          scrollEnabled={false}
-          inverted
-        />
+        {completedTasks.length > 0 ? (
+          <FlatList
+            data={completedTasks}
+            renderItem={({item}) => (
+              <TaskItem
+                id={item.id.toString()}
+                task={item.task}
+                bgColor={item.bgColor}
+                completed={item.completed}
+                date={item.date}
+                time={item.time}
+                onTaskItemPressed={onTaskItemPressed}
+                handleDelete={handleDelete}
+                handleTaskCirclePress={handleTaskCirclePress}
+              />
+            )}
+            keyExtractor={item => item.id.toString()}
+            scrollEnabled={false}
+            inverted
+          />
+        ) : (
+          <View style={styles.noCompletedTextWrapper}>
+            <Text style={styles.noCompletedText}>
+              Still waiting for you to complete your tasks...
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -263,6 +286,22 @@ const styles = StyleSheet.create({
   },
   noTaskText: {
     fontSize: 18,
+    color: '#2B2D42',
+  },
+  noCompletedTextWrapper: {
+    marginTop: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: '#0A79DF',
+    borderRadius: 8,
+    marginHorizontal: 24,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+  },
+  noCompletedText: {
+    fontSize: 14,
     color: '#2B2D42',
   },
 });
