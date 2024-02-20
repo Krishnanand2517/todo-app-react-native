@@ -94,16 +94,16 @@ const TaskItem = ({
             onTaskItemPressed({id, task, bgColor, completed, date, time})
           }
           activeOpacity={0.5}>
+          <TouchableOpacity
+            style={styles.taskCompleteCircle}
+            onPress={() => handleTaskCirclePress(id)}>
+            {completed ? (
+              <Icon name="check-circle" size={20} color="#000" />
+            ) : (
+              <Icon name="circle" size={20} color="#000" />
+            )}
+          </TouchableOpacity>
           <View style={styles.taskTextWrapper}>
-            <TouchableOpacity
-              style={styles.taskCompleteCircle}
-              onPress={() => handleTaskCirclePress(id)}>
-              {completed ? (
-                <Icon name="check-circle" size={20} color="#000" />
-              ) : (
-                <Icon name="circle" size={20} color="#000" />
-              )}
-            </TouchableOpacity>
             <Text
               style={[
                 styles.taskText,
@@ -111,13 +111,13 @@ const TaskItem = ({
               ]}>
               {task}
             </Text>
+            {(date || time) && (
+              <View style={styles.dateTimeWrapper}>
+                <Text style={styles.dateTimeText}>{date}</Text>
+                <Text style={styles.dateTimeText}>{time}</Text>
+              </View>
+            )}
           </View>
-          {(date || time) && (
-            <View style={styles.dateTimeWrapper}>
-              <Text style={styles.dateTimeText}>{date}</Text>
-              <Text style={styles.dateTimeText}>{time}</Text>
-            </View>
-          )}
         </TouchableOpacity>
       </Animated.View>
     </Swipeable>
@@ -239,14 +239,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     paddingHorizontal: 12,
     paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 2,
   },
   taskTextWrapper: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    rowGap: 4,
   },
   taskCompleteCircle: {
-    paddingBottom: 10,
-    paddingRight: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   taskText: {
     fontSize: 16,
