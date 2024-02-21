@@ -11,6 +11,7 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Snackbar} from 'react-native-paper';
 
 import {RootStackParamList} from '../App';
 import TasksList from '../components/TasksList';
@@ -36,6 +37,8 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const isFocused = useIsFocused();
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [visible, setVisible] = useState(false);
+  const [deletedTask, setDeletedTask] = useState<Task>();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -62,16 +65,34 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onDelete = (taskId: string) => {
     try {
       if (tasks.length > 0) {
-        AsyncStorage.setItem(
-          'tasks',
-          JSON.stringify(tasks.filter((item: Task) => item.id !== taskId)),
-        );
+        const updatedTasks = tasks.filter((item: Task) => item.id !== taskId);
 
-        setTasks(tasks.filter((item: Task) => item.id !== taskId));
+        AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+        setDeletedTask(tasks.find((item: Task) => item.id === taskId));
+        setTasks(updatedTasks);
+        setVisible(true);
       }
     } catch (error) {
       if (error instanceof Error) {
         console.log('Failed to delete the task');
+      }
+    }
+  };
+
+  const undoDelete = () => {
+    try {
+      if (deletedTask) {
+        const updatedTasks = [...tasks, deletedTask];
+
+        AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+        setTasks(updatedTasks);
+        setDeletedTask(undefined);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Failed to undo the deletion');
       }
     }
   };
@@ -109,6 +130,13 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
           />
         </View>
       </ScrollView>
+      <Snackbar
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        duration={3500}
+        action={{label: 'UNDO', onPress: undoDelete}}>
+        Task deleted
+      </Snackbar>
     </SafeAreaView>
   );
 };
