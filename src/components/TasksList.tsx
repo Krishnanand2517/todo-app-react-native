@@ -243,14 +243,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     columnGap: 2,
   },
-  taskTextWrapper: {
-    rowGap: 4,
-  },
   taskCompleteCircle: {
     paddingVertical: 6,
     paddingHorizontal: 6,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  taskTextWrapper: {
+    rowGap: 4,
+    flex: 1,
   },
   taskText: {
     fontSize: 16,
