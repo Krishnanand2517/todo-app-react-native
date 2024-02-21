@@ -85,11 +85,13 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
 
   const undoDelete = () => {
     try {
-      if (deletedTask && deletedTaskIndex) {
+      if (deletedTask && deletedTaskIndex !== undefined) {
         const updatedTasks = [...tasks];
         updatedTasks.splice(deletedTaskIndex, 0, deletedTask);
 
         AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
         setTasks(updatedTasks);
         setDeletedTask(undefined);
@@ -138,7 +140,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
-        duration={3500}
+        duration={4000}
         action={{label: 'UNDO', onPress: undoDelete}}>
         Task deleted
       </Snackbar>
