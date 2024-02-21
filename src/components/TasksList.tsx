@@ -13,6 +13,7 @@ import {Swipeable} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 
 type TaskItemProps = {
+  index: number;
   id: string;
   task: string;
   bgColor: string;
@@ -20,18 +21,19 @@ type TaskItemProps = {
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
-  handleDelete: (taskId: string) => void;
+  handleDelete: (taskId: string, taskIndex: number) => void;
   handleTaskCirclePress: (taskId: string) => void;
 };
 
 interface TasksListProps {
   onTaskItemPressed: (task: Task) => void;
   tasks: Task[];
-  onDelete: (taskId: string) => void;
+  onDelete: (taskId: string, taskIndex: number) => void;
   onToggleComplete: (taskId: string) => void;
 }
 
 const TaskItem = ({
+  index,
   id,
   task,
   bgColor,
@@ -52,7 +54,7 @@ const TaskItem = ({
       duration: 500,
       useNativeDriver: true,
     }).start(() => {
-      handleDelete(id);
+      handleDelete(id, index);
     });
   };
 
@@ -133,8 +135,8 @@ const TasksList = ({
   const incompleteTasks = tasks.filter(task => task.completed === false);
   const completedTasks = tasks.filter(task => task.completed === true);
 
-  const handleDelete = (taskId: string) => {
-    onDelete(taskId);
+  const handleDelete = (taskId: string, taskIndex: number) => {
+    onDelete(taskId, taskIndex);
 
     LayoutAnimation.configureNext({
       duration: 300,
@@ -166,8 +168,9 @@ const TasksList = ({
       {incompleteTasks.length > 0 ? (
         <FlatList
           data={incompleteTasks}
-          renderItem={({item}) => (
+          renderItem={({item, index}) => (
             <TaskItem
+              index={index}
               id={item.id.toString()}
               task={item.task}
               bgColor={item.bgColor}
@@ -196,8 +199,9 @@ const TasksList = ({
         {completedTasks.length > 0 ? (
           <FlatList
             data={completedTasks}
-            renderItem={({item}) => (
+            renderItem={({item, index}) => (
               <TaskItem
+                index={index}
                 id={item.id.toString()}
                 task={item.task}
                 bgColor={item.bgColor}

@@ -39,6 +39,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [visible, setVisible] = useState(false);
   const [deletedTask, setDeletedTask] = useState<Task>();
+  const [deletedTaskIndex, setDeletedTaskIndex] = useState<number>();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -46,6 +47,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         const value = await AsyncStorage.getItem('tasks');
         if (value !== null) {
           setTasks(JSON.parse(value));
+
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }
       } catch (error) {
@@ -62,7 +64,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onTaskItemPressed = (task: Task) =>
     navigation.navigate('EditTask', {task});
 
-  const onDelete = (taskId: string) => {
+  const onDelete = (taskId: string, taskIndex: number) => {
     try {
       if (tasks.length > 0) {
         const updatedTasks = tasks.filter((item: Task) => item.id !== taskId);
@@ -70,6 +72,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
         setDeletedTask(tasks.find((item: Task) => item.id === taskId));
+        setDeletedTaskIndex(taskIndex);
         setTasks(updatedTasks);
         setVisible(true);
       }
@@ -82,13 +85,15 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
 
   const undoDelete = () => {
     try {
-      if (deletedTask) {
-        const updatedTasks = [...tasks, deletedTask];
+      if (deletedTask && deletedTaskIndex) {
+        const updatedTasks = [...tasks];
+        updatedTasks.splice(deletedTaskIndex, 0, deletedTask);
 
         AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
         setTasks(updatedTasks);
         setDeletedTask(undefined);
+        setDeletedTaskIndex(undefined);
       }
     } catch (error) {
       if (error instanceof Error) {
