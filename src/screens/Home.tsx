@@ -11,10 +11,11 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Snackbar} from 'react-native-paper';
+import {Snackbar, Portal, Modal} from 'react-native-paper';
 
 import {RootStackParamList} from '../App';
 import TasksList from '../components/TasksList';
+import AddTask from './AddTask';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -37,7 +38,9 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const isFocused = useIsFocused();
 
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [visible, setVisible] = useState(false);
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+  const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
+
   const [deletedTask, setDeletedTask] = useState<Task>();
   const [deletedTaskIndex, setDeletedTaskIndex] = useState<number>();
 
@@ -60,9 +63,37 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
     fetchTasks();
   }, [isFocused]);
 
-  const onAddButtonPressed = () => navigation.navigate('AddTask');
+  const showAddTaskModal = () => setIsAddTaskModalVisible(true);
+  const hideAddTaskModal = () => setIsAddTaskModalVisible(false);
+
+  const onAddButtonPressed = () => {
+    showAddTaskModal();
+  };
+
   const onTaskItemPressed = (task: Task) =>
     navigation.navigate('EditTask', {task});
+
+  const onSave = async (newTask: Task) => {
+    try {
+      const value = await AsyncStorage.getItem('tasks');
+      if (value !== null) {
+        const allTasks = JSON.parse(value);
+
+        if (Array.isArray(allTasks)) {
+          const updatedTasks = allTasks.concat(newTask);
+
+          await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setTasks(updatedTasks);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Failed to store the task into phone memory');
+      }
+    }
+  };
 
   const onDelete = (taskId: string, taskIndex: number) => {
     try {
@@ -74,7 +105,7 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         setDeletedTask(tasks.find((item: Task) => item.id === taskId));
         setDeletedTaskIndex(taskIndex);
         setTasks(updatedTasks);
-        setVisible(true);
+        setIsSnackbarVisible(true);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -122,6 +153,14 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
 
   return (
     <SafeAreaView style={styles.screen}>
+      <Portal>
+        <Modal
+          visible={isAddTaskModalVisible}
+          onDismiss={hideAddTaskModal}
+          contentContainerStyle={styles.modalContent}>
+          <AddTask hideAddTaskModal={hideAddTaskModal} onSave={onSave} />
+        </Modal>
+      </Portal>
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.headWrapper}>
@@ -138,8 +177,8 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         </View>
       </ScrollView>
       <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
+        visible={isSnackbarVisible}
+        onDismiss={() => setIsSnackbarVisible(false)}
         duration={4000}
         action={{label: 'UNDO', onPress: undoDelete}}>
         Task deleted
@@ -154,6 +193,10 @@ const styles = StyleSheet.create({
   screen: {
     height: '100%',
     backgroundColor: '#FFF6E9',
+  },
+  modalContent: {
+    height: 320,
+    marginHorizontal: 24,
   },
   container: {
     marginTop: 64,

@@ -5,7 +5,6 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SplashScreen from 'react-native-splash-screen';
 
 import Home from './screens/Home';
-import AddTask from './screens/AddTask';
 import EditTask from './screens/EditTask';
 import {PaperProvider} from 'react-native-paper';
 
@@ -30,7 +29,6 @@ const App = (): React.JSX.Element => {
             initialRouteName="Home"
             screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
             <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="AddTask" component={AddTask} />
             <Stack.Screen name="EditTask" component={EditTask} />
           </Stack.Navigator>
         </NavigationContainer>

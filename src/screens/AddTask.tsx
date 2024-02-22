@@ -7,19 +7,14 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-native-date-picker';
-import Icon from 'react-native-vector-icons/Feather';
 
 import {bgColors} from '../data/taskItemBgColors';
-import {RootStackParamList} from '../App';
 
-type AddTaskProps = NativeStackScreenProps<RootStackParamList, 'AddTask'>;
-
-interface DoneButtonProps {
-  onDoneButtonPressed: () => void;
+interface AddTaskProps {
+  hideAddTaskModal: () => void;
+  onSave: (newTask: Task) => Promise<void>;
 }
 
 interface AddDateButtonProps {
@@ -29,19 +24,6 @@ interface AddDateButtonProps {
 interface AddTimeButtonProps {
   onAddTimeButtonPressed: () => void;
 }
-
-const DoneButton = ({
-  onDoneButtonPressed,
-}: DoneButtonProps): React.JSX.Element => {
-  return (
-    <TouchableOpacity
-      style={styles.button}
-      onPress={onDoneButtonPressed}
-      activeOpacity={0.7}>
-      <Icon name="check" size={30} color="#FFF" />
-    </TouchableOpacity>
-  );
-};
 
 const AddDateButton = ({
   onAddDateButtonPressed,
@@ -69,52 +51,38 @@ const AddTimeButton = ({
   );
 };
 
-const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
+const AddTask = ({
+  hideAddTaskModal,
+  onSave,
+}: AddTaskProps): React.JSX.Element => {
   const [taskContent, setTaskContent] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [timeModalOpen, setTimeModalOpen] = useState(false);
 
-  const onDoneButtonPressed = async () => {
+  const onSaveButtonPressed = async () => {
     if (taskContent !== '') {
       // Randomly choosing bgColor
       const randomIndex = Math.floor(Math.random() * bgColors.length);
       const randomColor = bgColors[randomIndex];
 
-      try {
-        const newTask: Task = {
-          id: uuid.v4().toString(),
-          task: taskContent,
-          bgColor: randomColor,
-          completed: false,
-          date,
-          time,
-        };
+      const newTask: Task = {
+        id: uuid.v4().toString(),
+        task: taskContent,
+        bgColor: randomColor,
+        completed: false,
+        date,
+        time,
+      };
 
-        const value = await AsyncStorage.getItem('tasks');
-        if (value !== null) {
-          const allTasks = JSON.parse(value);
-
-          if (Array.isArray(allTasks)) {
-            await AsyncStorage.setItem(
-              'tasks',
-              JSON.stringify(allTasks.concat(newTask)),
-            );
-          }
-        } else {
-          await AsyncStorage.setItem('tasks', JSON.stringify([newTask]));
-        }
-
-        navigation.navigate('Home');
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log('Failed to store the task into phone memory');
-        }
-      }
-    } else {
-      navigation.navigate('Home');
+      await onSave(newTask);
     }
+    hideAddTaskModal();
+  };
+
+  const onCancelButtonPressed = () => {
+    hideAddTaskModal();
   };
 
   const onAddDateButtonPressed = () => setDateModalOpen(true);
@@ -125,7 +93,6 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
       <View style={styles.container}>
         <View style={styles.headWrapper}>
           <Text style={styles.headingText}>Add Task</Text>
-          <DoneButton onDoneButtonPressed={onDoneButtonPressed} />
         </View>
         <View style={styles.taskInputWrapper}>
           <TextInput
@@ -151,6 +118,19 @@ const AddTask = ({navigation}: AddTaskProps): React.JSX.Element => {
                 <Text style={styles.dateTimeText}>{time}</Text>
               </View>
             )}
+          </View>
+
+          <View style={styles.actionButtonsWrapper}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={onCancelButtonPressed}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={onSaveButtonPressed}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -206,10 +186,11 @@ export default AddTask;
 const styles = StyleSheet.create({
   screen: {
     height: '100%',
-    backgroundColor: '#FFF6E9',
+    backgroundColor: '#FFF',
+    borderRadius: 16,
   },
   container: {
-    marginTop: 64,
+    marginVertical: 24,
     paddingHorizontal: 24,
   },
   headWrapper: {
@@ -218,44 +199,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontWeight: '700',
-    fontSize: 32,
+    fontWeight: '600',
+    fontSize: 24,
     color: '#2B2D42',
   },
-  button: {
-    backgroundColor: '#33B249',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 18,
-    elevation: 5,
-  },
   taskInputWrapper: {
-    marginTop: 36,
+    marginTop: 32,
   },
   taskInput: {
-    backgroundColor: '#CAF0F8',
     borderWidth: 2,
     borderColor: '#000000',
     borderRadius: 8,
-    marginVertical: 14,
     paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingVertical: 8,
     fontSize: 16,
     color: '#2B2D42',
   },
   dateTimeButtonsWrapper: {
     marginTop: 24,
-    rowGap: 20,
+    rowGap: 14,
   },
   dateTimeButton: {
     backgroundColor: '#0A79DF',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 6,
     borderRadius: 8,
     elevation: 5,
   },
   dateTimeButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#FFFFFF',
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -277,5 +249,23 @@ const styles = StyleSheet.create({
   dateTimeText: {
     fontSize: 14,
     color: '#2B2D42',
+  },
+  actionButtonsWrapper: {
+    marginTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    padding: 8,
+  },
+  cancelButtonText: {
+    color: 'tomato',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  saveButtonText: {
+    color: '#33B249',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
