@@ -237,6 +237,8 @@ const styles = StyleSheet.create({
   },
   taskItem: {
     borderWidth: 2,
+    borderRightWidth: 3,
+    borderBottomWidth: 4,
     borderColor: '#000000',
     borderRadius: 16,
     marginVertical: 12,
