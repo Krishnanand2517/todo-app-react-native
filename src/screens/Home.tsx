@@ -88,17 +88,19 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onAdd = async (newTask: Task) => {
     try {
       const value = await AsyncStorage.getItem('tasks');
+      let allTasks: Task[] = [];
+
       if (value !== null) {
-        const allTasks = JSON.parse(value);
+        allTasks = JSON.parse(value);
+      }
 
-        if (Array.isArray(allTasks)) {
-          const updatedTasks = allTasks.concat(newTask);
+      if (Array.isArray(allTasks)) {
+        const updatedTasks = [...allTasks, newTask];
 
-          await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          setTasks(updatedTasks);
-        }
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setTasks(updatedTasks);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -110,26 +112,28 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const onEdit = async (editedTask: EditableTask) => {
     try {
       const value = await AsyncStorage.getItem('tasks');
+      let allTasks: Task[] = [];
+
       if (value !== null) {
-        const allTasks = JSON.parse(value);
+        allTasks = JSON.parse(value);
+      }
 
-        if (Array.isArray(allTasks)) {
-          const updatedTasks = allTasks.map((item: Task) =>
-            item.id === editedTask.id
-              ? {
-                  ...item,
-                  task: editedTask.task,
-                  date: editedTask.date,
-                  time: editedTask.time,
-                }
-              : item,
-          );
+      if (Array.isArray(allTasks)) {
+        const updatedTasks = allTasks.map((item: Task) =>
+          item.id === editedTask.id
+            ? {
+                ...item,
+                task: editedTask.task,
+                date: editedTask.date,
+                time: editedTask.time,
+              }
+            : item,
+        );
 
-          await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          setTasks(updatedTasks);
-        }
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setTasks(updatedTasks);
       }
     } catch (error) {
       if (error instanceof Error) {
