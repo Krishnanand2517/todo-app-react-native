@@ -16,6 +16,7 @@ import {Snackbar, Portal, Modal} from 'react-native-paper';
 import {RootStackParamList} from '../App';
 import TasksList from '../components/TasksList';
 import AddTask from './AddTask';
+import EditTask from './EditTask';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -38,8 +39,11 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const isFocused = useIsFocused();
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task>();
+
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
+  const [isEditTaskModalVisible, setIsEditTaskModalVisible] = useState(false);
 
   const [deletedTask, setDeletedTask] = useState<Task>();
   const [deletedTaskIndex, setDeletedTaskIndex] = useState<number>();
@@ -66,14 +70,22 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
   const showAddTaskModal = () => setIsAddTaskModalVisible(true);
   const hideAddTaskModal = () => setIsAddTaskModalVisible(false);
 
+  const showEditTaskModal = () => setIsEditTaskModalVisible(true);
+  const hideEditTaskModal = () => {
+    setIsEditTaskModalVisible(false);
+    setSelectedTask(undefined);
+  };
+
   const onAddButtonPressed = () => {
     showAddTaskModal();
   };
 
-  const onTaskItemPressed = (task: Task) =>
-    navigation.navigate('EditTask', {task});
+  const onTaskItemPressed = (task: Task) => {
+    setSelectedTask(task);
+    showEditTaskModal();
+  };
 
-  const onSave = async (newTask: Task) => {
+  const onAdd = async (newTask: Task) => {
     try {
       const value = await AsyncStorage.getItem('tasks');
       if (value !== null) {
@@ -91,6 +103,37 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
     } catch (error) {
       if (error instanceof Error) {
         console.log('Failed to store the task into phone memory');
+      }
+    }
+  };
+
+  const onEdit = async (editedTask: EditableTask) => {
+    try {
+      const value = await AsyncStorage.getItem('tasks');
+      if (value !== null) {
+        const allTasks = JSON.parse(value);
+
+        if (Array.isArray(allTasks)) {
+          const updatedTasks = allTasks.map((item: Task) =>
+            item.id === editedTask.id
+              ? {
+                  ...item,
+                  task: editedTask.task,
+                  date: editedTask.date,
+                  time: editedTask.time,
+                }
+              : item,
+          );
+
+          await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setTasks(updatedTasks);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('Failed to edit the task');
       }
     }
   };
@@ -158,9 +201,25 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
           visible={isAddTaskModalVisible}
           onDismiss={hideAddTaskModal}
           contentContainerStyle={styles.modalContent}>
-          <AddTask hideAddTaskModal={hideAddTaskModal} onSave={onSave} />
+          <AddTask hideAddTaskModal={hideAddTaskModal} onSave={onAdd} />
         </Modal>
       </Portal>
+
+      {selectedTask && (
+        <Portal>
+          <Modal
+            visible={isEditTaskModalVisible}
+            onDismiss={hideEditTaskModal}
+            contentContainerStyle={styles.modalContent}>
+            <EditTask
+              task={selectedTask}
+              hideEditTaskModal={hideEditTaskModal}
+              onSave={onEdit}
+            />
+          </Modal>
+        </Portal>
+      )}
+
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.headWrapper}>
