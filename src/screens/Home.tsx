@@ -30,7 +30,7 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
       style={styles.button}
       onPress={onAddButtonPressed}
       activeOpacity={0.7}>
-      <Text style={styles.buttonText}>+ ADD</Text>
+      <Text style={styles.buttonText}>+</Text>
     </TouchableOpacity>
   );
 };
@@ -224,7 +224,6 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         <View style={styles.container}>
           <View style={styles.headWrapper}>
             <Text style={styles.headingText}>Tasks</Text>
-            <AddButton onAddButtonPressed={onAddButtonPressed} />
           </View>
 
           <TasksList
@@ -235,6 +234,9 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
           />
         </View>
       </ScrollView>
+
+      <AddButton onAddButtonPressed={onAddButtonPressed} />
+
       <Snackbar
         visible={isSnackbarVisible}
         onDismiss={() => setIsSnackbarVisible(false)}
@@ -272,14 +274,19 @@ const styles = StyleSheet.create({
     color: '#2B2D42',
   },
   button: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
     backgroundColor: '#33B249',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 18,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
     elevation: 5,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 28,
     color: '#FFFFFF',
   },
 });
