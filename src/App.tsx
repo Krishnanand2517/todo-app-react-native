@@ -20,7 +20,12 @@ const App = (): React.JSX.Element => {
       <PaperProvider>
         <NavigationContainer>
           <Tab.Navigator
-            tabBar={props => <CustomScrollableTabBar {...props} />}>
+            tabBar={props => <CustomScrollableTabBar {...props} />}
+            screenOptions={{
+              tabBarBounces: true,
+              tabBarScrollEnabled: true,
+              tabBarItemStyle: {width: 120},
+            }}>
             <Tab.Screen name="Home" component={Home} />
             <Tab.Screen name="Tasks" component={Home} />
             <Tab.Screen name="Tasks2" component={Home} />

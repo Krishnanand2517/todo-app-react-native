@@ -1,5 +1,5 @@
-import React from 'react';
-import {Text, ScrollView, StyleSheet} from 'react-native';
+import React, {useRef, useEffect} from 'react';
+import {Animated, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
 import {MaterialTopTabBarProps} from '@react-navigation/material-top-tabs';
 
 const CustomScrollableTabBar = ({
@@ -8,8 +8,19 @@ const CustomScrollableTabBar = ({
   navigation,
   position,
 }: MaterialTopTabBarProps): React.JSX.Element => {
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      const tabWidth = 120;
+      const offset = state.index * tabWidth;
+      scrollViewRef.current.scrollTo({x: offset, animated: true});
+    }
+  }, [state]);
+
   return (
     <ScrollView
+      ref={scrollViewRef}
       horizontal
       showsHorizontalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
@@ -45,14 +56,30 @@ const CustomScrollableTabBar = ({
           });
         };
 
+        const inputRange = state.routes.map((_, i) => i);
+        const opacity = position.interpolate({
+          inputRange,
+          outputRange: inputRange.map(i => (i === index ? 1 : 0.5)),
+        });
+
         return (
-          <Text
-            key={route.key}
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityState={isFocused ? {selected: true} : {}}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
             onPress={onPress}
-            onLongPress={onLongPress}
-            style={[styles.tabText, isFocused && styles.tabTextSelected]}>
-            {label}
-          </Text>
+            onLongPress={onLongPress}>
+            <Animated.Text
+              key={route.key}
+              style={[
+                styles.tabText,
+                isFocused && styles.tabTextSelected,
+                {opacity},
+              ]}>
+              {label}
+            </Animated.Text>
+          </TouchableOpacity>
         );
       })}
     </ScrollView>
@@ -77,11 +104,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     fontSize: 18,
     fontWeight: '600',
-    color: '#888888',
+    color: '#000',
   },
   tabTextSelected: {
     fontWeight: '700',
-    color: '#000',
     backgroundColor: '#ADF7B6',
     borderRadius: 18,
     borderWidth: 1,
