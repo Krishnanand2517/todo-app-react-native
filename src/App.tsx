@@ -1,17 +1,14 @@
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SplashScreen from 'react-native-splash-screen';
 
 import Home from './screens/Home';
 import {PaperProvider} from 'react-native-paper';
+import CustomScrollableTabBar from './components/CustomScrollableTabBar';
 
-export type RootStackParamList = {
-  Home: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createMaterialTopTabNavigator();
 
 const App = (): React.JSX.Element => {
   useEffect(() => {
@@ -22,11 +19,17 @@ const App = (): React.JSX.Element => {
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider>
         <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
-            <Stack.Screen name="Home" component={Home} />
-          </Stack.Navigator>
+          <Tab.Navigator
+            tabBar={props => <CustomScrollableTabBar {...props} />}>
+            <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen name="Tasks" component={Home} />
+            <Tab.Screen name="Tasks2" component={Home} />
+            <Tab.Screen name="Tasks3" component={Home} />
+            <Tab.Screen name="Tasks4" component={Home} />
+            <Tab.Screen name="Tasks5" component={Home} />
+            <Tab.Screen name="Tasks6" component={Home} />
+            <Tab.Screen name="Tasks7" component={Home} />
+          </Tab.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </GestureHandlerRootView>

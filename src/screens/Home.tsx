@@ -8,17 +8,13 @@ import {
   ScrollView,
   LayoutAnimation,
 } from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Snackbar, Portal, Modal} from 'react-native-paper';
 
-import {RootStackParamList} from '../App';
 import TasksList from '../components/TasksList';
 import AddTask from './AddTask';
 import EditTask from './EditTask';
-
-type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 interface AddButtonProps {
   onAddButtonPressed: () => void;
@@ -35,7 +31,7 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
   );
 };
 
-const Home = ({navigation}: HomeProps): React.JSX.Element => {
+const Home = (): React.JSX.Element => {
   const isFocused = useIsFocused();
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -224,11 +220,11 @@ const Home = ({navigation}: HomeProps): React.JSX.Element => {
         </Portal>
       )}
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <View style={styles.headWrapper}>
+          {/* <View style={styles.headWrapper}>
             <Text style={styles.headingText}>Tasks</Text>
-          </View>
+          </View> */}
 
           <TasksList
             onTaskItemPressed={onTaskItemPressed}
@@ -264,7 +260,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
   },
   container: {
-    marginTop: 64,
+    // marginTop: 64,
   },
   headWrapper: {
     flexDirection: 'row',
