@@ -64,6 +64,7 @@ const CustomScrollableTabBar = ({
 
         return (
           <TouchableOpacity
+            key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? {selected: true} : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -71,7 +72,6 @@ const CustomScrollableTabBar = ({
             onPress={onPress}
             onLongPress={onLongPress}>
             <Animated.Text
-              key={route.key}
               style={[
                 styles.tabText,
                 isFocused && styles.tabTextSelected,
@@ -92,8 +92,9 @@ const styles = StyleSheet.create({
   tabBarWrapper: {
     height: 60,
     flexGrow: 0,
-    borderBottomWidth: 2,
-    borderBottomColor: '#000',
+    // borderBottomWidth: 2,
+    // borderBottomColor: '#000',
+    backgroundColor: '#FFF6E9',
   },
   tabBarContentContainer: {
     alignItems: 'center',
@@ -108,9 +109,7 @@ const styles = StyleSheet.create({
   },
   tabTextSelected: {
     fontWeight: '700',
-    backgroundColor: '#ADF7B6',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#000',
+    borderBottomWidth: 3,
+    borderBottomColor: '#000',
   },
 });
