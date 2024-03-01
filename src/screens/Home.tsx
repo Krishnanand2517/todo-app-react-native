@@ -11,10 +11,15 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Snackbar, Portal, Modal} from 'react-native-paper';
+import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
+
+import {RootTabsPropList} from '../App';
 
 import TasksList from '../components/TasksList';
 import AddTask from './AddTask';
 import EditTask from './EditTask';
+
+type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
 interface AddButtonProps {
   onAddButtonPressed: () => void;
@@ -31,8 +36,10 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
   );
 };
 
-const Home = (): React.JSX.Element => {
+const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   const isFocused = useIsFocused();
+
+  const taskCategory = route.params?.taskCategory || 'All Tasks';
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task>();
@@ -61,7 +68,7 @@ const Home = (): React.JSX.Element => {
     };
 
     fetchTasks();
-  }, [isFocused]);
+  }, [isFocused, taskCategory]);
 
   const showAddTaskModal = () => setIsAddTaskModalVisible(true);
   const hideAddTaskModal = () => setIsAddTaskModalVisible(false);
@@ -201,7 +208,11 @@ const Home = (): React.JSX.Element => {
           visible={isAddTaskModalVisible}
           onDismiss={hideAddTaskModal}
           contentContainerStyle={styles.modalContent}>
-          <AddTask hideAddTaskModal={hideAddTaskModal} onSave={onAdd} />
+          <AddTask
+            taskCategory={taskCategory}
+            hideAddTaskModal={hideAddTaskModal}
+            onSave={onAdd}
+          />
         </Modal>
       </Portal>
 

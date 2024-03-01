@@ -3,6 +3,7 @@ interface Task {
   task: string;
   bgColor: string;
   completed: boolean;
+  category: string;
   date?: string;
   time?: string;
 }

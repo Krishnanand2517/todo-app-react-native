@@ -15,6 +15,7 @@ import {bgColors} from '../data/taskItemBgColors';
 interface AddTaskProps {
   hideAddTaskModal: () => void;
   onSave: (newTask: Task) => Promise<void>;
+  taskCategory: string;
 }
 
 interface AddDateButtonProps {
@@ -54,6 +55,7 @@ const AddTimeButton = ({
 const AddTask = ({
   hideAddTaskModal,
   onSave,
+  taskCategory,
 }: AddTaskProps): React.JSX.Element => {
   const [taskContent, setTaskContent] = useState('');
   const [date, setDate] = useState('');
@@ -72,6 +74,7 @@ const AddTask = ({
         task: taskContent,
         bgColor: randomColor,
         completed: false,
+        category: taskCategory,
         date,
         time,
       };

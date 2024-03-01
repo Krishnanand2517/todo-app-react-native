@@ -1,19 +1,80 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Home from './screens/Home';
+import AddCategory from './screens/AddCategory';
 import {PaperProvider} from 'react-native-paper';
 import CustomScrollableTabBar from './components/CustomScrollableTabBar';
 
-const Tab = createMaterialTopTabNavigator();
+export type RootTabsPropList = {
+  [key: string]: {taskCategory?: string} | undefined;
+  AddCategory: undefined;
+};
+
+const Tab = createMaterialTopTabNavigator<RootTabsPropList>();
+
+const AddCategoryScreen = ({route}: {route: any}) => {
+  const {onAddCategory} = route.params;
+
+  return <AddCategory onAddCategory={onAddCategory} />;
+};
 
 const App = (): React.JSX.Element => {
+  const [categories, setCategories] = useState<string[]>(['All Tasks']);
+
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const value = await AsyncStorage.getItem('categories');
+        let allCategories: string[] = [];
+
+        if (value !== null) {
+          allCategories = JSON.parse(value);
+        } else {
+          allCategories = ['All Tasks'];
+          await AsyncStorage.setItem(
+            'categories',
+            JSON.stringify(allCategories),
+          );
+        }
+
+        if (Array.isArray(allCategories) && allCategories.length > 0) {
+          setCategories(allCategories);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(
+            'Failed to fetch categories from storage:',
+            error.message,
+          );
+        }
+      }
+    };
+
+    fetchCategories();
     SplashScreen.hide();
   }, []);
+
+  const onAddCategory = async (category: string) => {
+    try {
+      setCategories(prevCategories => {
+        const updatedCategories = [...prevCategories, category];
+        AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
+        return updatedCategories;
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(
+          'Failed to add new category in phone storage:',
+          error.message,
+        );
+      }
+    }
+  };
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -25,15 +86,16 @@ const App = (): React.JSX.Element => {
               tabBarBounces: true,
               tabBarScrollEnabled: true,
               tabBarItemStyle: {width: 120},
-            }}>
-            <Tab.Screen name="Home" component={Home} />
-            <Tab.Screen name="Tasks" component={Home} />
-            <Tab.Screen name="Tasks2" component={Home} />
-            <Tab.Screen name="Tasks3" component={Home} />
-            <Tab.Screen name="Tasks4" component={Home} />
-            <Tab.Screen name="Tasks5" component={Home} />
-            <Tab.Screen name="Tasks6" component={Home} />
-            <Tab.Screen name="Tasks7" component={Home} />
+            }}
+            initialRouteName="All Tasks">
+            {categories.map(category => (
+              <Tab.Screen key={category} name={category} component={Home} />
+            ))}
+            <Tab.Screen
+              name="AddCategory"
+              component={AddCategoryScreen}
+              initialParams={{onAddCategory}}
+            />
           </Tab.Navigator>
         </NavigationContainer>
       </PaperProvider>

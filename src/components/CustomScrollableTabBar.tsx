@@ -36,6 +36,7 @@ const CustomScrollableTabBar = ({
             : route.name;
 
         const isFocused = state.index === index;
+        let opacity: number | Animated.AnimatedInterpolation<number> = 1;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -45,7 +46,9 @@ const CustomScrollableTabBar = ({
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            navigation.navigate(route.name, {
+              taskCategory: label,
+            });
           }
         };
 
@@ -56,11 +59,13 @@ const CustomScrollableTabBar = ({
           });
         };
 
-        const inputRange = state.routes.map((_, i) => i);
-        const opacity = position.interpolate({
-          inputRange,
-          outputRange: inputRange.map(i => (i === index ? 1 : 0.5)),
-        });
+        if (state.routes.length >= 2) {
+          const inputRange = state.routes.map((_, i) => i);
+          opacity = position.interpolate({
+            inputRange,
+            outputRange: inputRange.map(i => (i === index ? 1 : 0.5)),
+          });
+        }
 
         return (
           <TouchableOpacity
@@ -111,5 +116,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     borderBottomWidth: 3,
     borderBottomColor: '#000',
+    borderBottomLeftRadius: 48,
+    borderBottomRightRadius: 48,
   },
 });
