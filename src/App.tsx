@@ -123,6 +123,7 @@ const App = (): React.JSX.Element => {
             <Tab.Screen
               name="AddCategory"
               component={AddCategoryScreen}
+              options={{tabBarLabel: ' + '}}
               initialParams={{onAddCategory}}
             />
           </Tab.Navigator>

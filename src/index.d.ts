@@ -8,4 +8,4 @@ interface Task {
   time?: string;
 }
 
-type EditableTask = Omit<Task, 'bgColor' | 'completed'>;
+type EditableTask = Omit<Task, 'bgColor' | 'completed' | 'category'>;

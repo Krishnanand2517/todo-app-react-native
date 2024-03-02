@@ -18,6 +18,7 @@ type TaskItemProps = {
   task: string;
   bgColor: string;
   completed: boolean;
+  category: string;
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
@@ -38,6 +39,7 @@ const TaskItem = ({
   task,
   bgColor,
   completed,
+  category,
   date,
   time,
   onTaskItemPressed,
@@ -93,7 +95,15 @@ const TaskItem = ({
             completed && {opacity: 0.6},
           ]}
           onPress={() =>
-            onTaskItemPressed({id, task, bgColor, completed, date, time})
+            onTaskItemPressed({
+              id,
+              task,
+              bgColor,
+              completed,
+              category,
+              date,
+              time,
+            })
           }
           activeOpacity={0.5}>
           <TouchableOpacity
@@ -175,6 +185,7 @@ const TasksList = ({
               task={item.task}
               bgColor={item.bgColor}
               completed={item.completed}
+              category={item.category}
               date={item.date}
               time={item.time}
               onTaskItemPressed={onTaskItemPressed}
@@ -206,6 +217,7 @@ const TasksList = ({
                 task={item.task}
                 bgColor={item.bgColor}
                 completed={item.completed}
+                category={item.category}
                 date={item.date}
                 time={item.time}
                 onTaskItemPressed={onTaskItemPressed}

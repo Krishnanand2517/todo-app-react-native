@@ -72,15 +72,24 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const value = await AsyncStorage.getItem('tasks');
+        // const value = await AsyncStorage.getItem('tasks');
+        const value = await AsyncStorage.getItem(taskCategory);
+
         if (value !== null) {
-          setTasks(JSON.parse(value));
+          const categoryTasks: Task[] = JSON.parse(value);
+          // const categoryTasks = allTasks.filter(
+          //   task => task.category === taskCategory,
+          // );
+
+          if (categoryTasks.length > 0) {
+            setTasks(categoryTasks);
+          }
 
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         }
       } catch (error) {
         if (error instanceof Error) {
-          console.log('Failed to fetch tasks from storage');
+          console.log('Failed to fetch tasks from storage:', error.message);
         }
       }
     };
@@ -122,9 +131,12 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       }
 
       if (Array.isArray(allTasks)) {
-        const updatedTasks = [...allTasks, newTask];
+        const categoryTasks = allTasks.filter(
+          task => task.category === taskCategory,
+        );
+        const updatedTasks = [...categoryTasks, newTask];
 
-        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        await AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
 
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setTasks(updatedTasks);
