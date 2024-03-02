@@ -11,7 +11,12 @@ import {PaperProvider} from 'react-native-paper';
 import CustomScrollableTabBar from './components/CustomScrollableTabBar';
 
 export type RootTabsPropList = {
-  [key: string]: {taskCategory?: string} | undefined;
+  [key: string]:
+    | {
+        taskCategory?: string;
+        onDeleteCategory?: (category: string) => Promise<void>;
+      }
+    | undefined;
   AddCategory: undefined;
 };
 
@@ -76,6 +81,25 @@ const App = (): React.JSX.Element => {
     }
   };
 
+  const onDeleteCategory = async (category: string) => {
+    try {
+      setCategories(prevCategories => {
+        const updatedCategories = prevCategories.filter(
+          prevCategory => prevCategory !== category,
+        );
+        AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
+        return updatedCategories;
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(
+          'Failed to delete category from phone storage:',
+          error.message,
+        );
+      }
+    }
+  };
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider>
@@ -89,7 +113,12 @@ const App = (): React.JSX.Element => {
             }}
             initialRouteName="All Tasks">
             {categories.map(category => (
-              <Tab.Screen key={category} name={category} component={Home} />
+              <Tab.Screen
+                key={category}
+                name={category}
+                component={Home}
+                initialParams={{taskCategory: category, onDeleteCategory}}
+              />
             ))}
             <Tab.Screen
               name="AddCategory"

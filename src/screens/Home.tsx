@@ -25,6 +25,10 @@ interface AddButtonProps {
   onAddButtonPressed: () => void;
 }
 
+interface DeleteButtonProps {
+  onDeleteButtonPressed: () => void;
+}
+
 const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
   return (
     <TouchableOpacity
@@ -36,10 +40,24 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
   );
 };
 
+const DeleteButton = ({
+  onDeleteButtonPressed,
+}: DeleteButtonProps): React.JSX.Element => {
+  return (
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={onDeleteButtonPressed}
+      activeOpacity={0.7}>
+      <Text style={styles.deleteButtonText}>Delete List</Text>
+    </TouchableOpacity>
+  );
+};
+
 const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   const isFocused = useIsFocused();
 
   const taskCategory = route.params?.taskCategory || 'All Tasks';
+  const onDeleteCategory = route.params?.onDeleteCategory;
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task>();
@@ -81,6 +99,12 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
   const onAddButtonPressed = () => {
     showAddTaskModal();
+  };
+
+  const onDeleteButtonPressed = async () => {
+    if (onDeleteCategory !== undefined && taskCategory !== 'All Tasks') {
+      await onDeleteCategory(taskCategory);
+    }
   };
 
   const onTaskItemPressed = (task: Task) => {
@@ -233,9 +257,12 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {/* <View style={styles.headWrapper}>
-            <Text style={styles.headingText}>Tasks</Text>
-          </View> */}
+          {taskCategory !== 'All Tasks' && (
+            <View style={styles.headWrapper}>
+              {/* <Text style={styles.headingText}>Tasks</Text> */}
+              <DeleteButton onDeleteButtonPressed={onDeleteButtonPressed} />
+            </View>
+          )}
 
           <TasksList
             onTaskItemPressed={onTaskItemPressed}
@@ -275,7 +302,7 @@ const styles = StyleSheet.create({
   },
   headWrapper: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 24,
   },
@@ -283,6 +310,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 36,
     color: '#2B2D42',
+  },
+  deleteButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderWidth: 2,
+    borderColor: 'tomato',
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    color: 'tomato',
+    fontSize: 16,
+    fontWeight: '500',
   },
   button: {
     position: 'absolute',
