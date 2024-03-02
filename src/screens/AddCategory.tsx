@@ -6,7 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AddCategoryProps {
   onAddCategory: (category: string) => Promise<void>;
@@ -14,6 +15,25 @@ interface AddCategoryProps {
 
 const AddCategory = ({onAddCategory}: AddCategoryProps) => {
   const [category, setCategory] = useState('');
+  const [isEmpty, setIsEmpty] = useState(true);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
+  useEffect(() => {
+    setIsEmpty(category.trim() === '');
+
+    const checkDuplicate = async () => {
+      const value = await AsyncStorage.getItem('categories');
+      let allCategories: string[] = [];
+
+      if (value !== null) {
+        allCategories = JSON.parse(value);
+      }
+
+      setIsDuplicate(allCategories.includes(category));
+    };
+
+    checkDuplicate();
+  }, [category]);
 
   const onDoneButtonPressed = async () => {
     await onAddCategory(category);
@@ -26,9 +46,13 @@ const AddCategory = ({onAddCategory}: AddCategoryProps) => {
         <View style={styles.headWrapper}>
           <Text style={styles.headingText}>Add a New Category</Text>
           <TouchableOpacity
-            style={styles.addButton}
+            style={[
+              styles.addButton,
+              (isEmpty || isDuplicate) && styles.addButtonDisabled,
+            ]}
             onPress={onDoneButtonPressed}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            disabled={isEmpty || isDuplicate}>
             <Text style={styles.addButtonText}>Done</Text>
           </TouchableOpacity>
         </View>
@@ -71,6 +95,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     elevation: 5,
+  },
+  addButtonDisabled: {
+    backgroundColor: '#D3D3D3',
+    opacity: 0.5,
   },
   addButtonText: {
     color: '#FFF',
