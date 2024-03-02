@@ -11,9 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AddCategoryProps {
   onAddCategory: (category: string) => Promise<void>;
+  navigation: any;
 }
 
-const AddCategory = ({onAddCategory}: AddCategoryProps) => {
+const AddCategory = ({onAddCategory, navigation}: AddCategoryProps) => {
   const [category, setCategory] = useState('');
   const [isEmpty, setIsEmpty] = useState(true);
   const [isDuplicate, setIsDuplicate] = useState(false);
@@ -38,6 +39,12 @@ const AddCategory = ({onAddCategory}: AddCategoryProps) => {
   const onDoneButtonPressed = async () => {
     await onAddCategory(category);
     setCategory('');
+
+    setTimeout(() => {
+      navigation.navigate(category, {
+        taskCategory: category,
+      });
+    }, 200);
   };
 
   return (

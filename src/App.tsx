@@ -22,10 +22,16 @@ export type RootTabsPropList = {
 
 const Tab = createMaterialTopTabNavigator<RootTabsPropList>();
 
-const AddCategoryScreen = ({route}: {route: any}) => {
+const AddCategoryScreen = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) => {
   const {onAddCategory} = route.params;
 
-  return <AddCategory onAddCategory={onAddCategory} />;
+  return <AddCategory onAddCategory={onAddCategory} navigation={navigation} />;
 };
 
 const App = (): React.JSX.Element => {
