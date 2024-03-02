@@ -112,6 +112,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
   const onDeleteButtonPressed = async () => {
     if (onDeleteCategory !== undefined && taskCategory !== 'All Tasks') {
+      await AsyncStorage.removeItem(taskCategory);
       await onDeleteCategory(taskCategory);
     }
   };
@@ -123,17 +124,14 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
   const onAdd = async (newTask: Task) => {
     try {
-      const value = await AsyncStorage.getItem('tasks');
-      let allTasks: Task[] = [];
+      const value = await AsyncStorage.getItem(taskCategory);
+      let categoryTasks: Task[] = [];
 
       if (value !== null) {
-        allTasks = JSON.parse(value);
+        categoryTasks = JSON.parse(value);
       }
 
-      if (Array.isArray(allTasks)) {
-        const categoryTasks = allTasks.filter(
-          task => task.category === taskCategory,
-        );
+      if (Array.isArray(categoryTasks)) {
         const updatedTasks = [...categoryTasks, newTask];
 
         await AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
@@ -143,22 +141,25 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Failed to store the task into phone memory');
+        console.log(
+          'Failed to store the task into phone memory:',
+          error.message,
+        );
       }
     }
   };
 
   const onEdit = async (editedTask: EditableTask) => {
     try {
-      const value = await AsyncStorage.getItem('tasks');
-      let allTasks: Task[] = [];
+      const value = await AsyncStorage.getItem(taskCategory);
+      let categoryTasks: Task[] = [];
 
       if (value !== null) {
-        allTasks = JSON.parse(value);
+        categoryTasks = JSON.parse(value);
       }
 
-      if (Array.isArray(allTasks)) {
-        const updatedTasks = allTasks.map((item: Task) =>
+      if (Array.isArray(categoryTasks)) {
+        const updatedTasks = categoryTasks.map((item: Task) =>
           item.id === editedTask.id
             ? {
                 ...item,
@@ -169,14 +170,14 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
             : item,
         );
 
-        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        await AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
 
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setTasks(updatedTasks);
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Failed to edit the task');
+        console.log('Failed to edit the task:', error.message);
       }
     }
   };
@@ -186,7 +187,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       if (tasks.length > 0) {
         const updatedTasks = tasks.filter((item: Task) => item.id !== taskId);
 
-        AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
 
         setDeletedTask(tasks.find((item: Task) => item.id === taskId));
         setDeletedTaskIndex(taskIndex);
@@ -195,7 +196,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Failed to delete the task');
+        console.log('Failed to delete the task:', error.message);
       }
     }
   };
@@ -206,7 +207,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         const updatedTasks = [...tasks];
         updatedTasks.splice(deletedTaskIndex, 0, deletedTask);
 
-        AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
 
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
@@ -216,7 +217,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Failed to undo the deletion');
+        console.log('Failed to undo the deletion:', error.message);
       }
     }
   };
@@ -227,12 +228,12 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         item.id === taskId ? {...item, completed: !item.completed} : item,
       );
 
-      AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
 
       setTasks(updatedTasks);
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Failed to mark task as complete');
+        console.log('Failed to mark task as complete:', error.message);
       }
     }
   };
