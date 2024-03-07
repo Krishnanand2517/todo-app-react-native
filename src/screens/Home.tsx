@@ -18,6 +18,7 @@ import {RootTabsPropList} from '../App';
 import TasksList from '../components/TasksList';
 import AddTask from './AddTask';
 import EditTask from './EditTask';
+import PushNotification from 'react-native-push-notification';
 
 type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
@@ -107,6 +108,28 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   };
 
   const onAddButtonPressed = () => {
+    PushNotification.createChannel(
+      {
+        channelId: '1',
+        channelName: 'add',
+      },
+      created => console.log(`createChannel returned '${created}'`),
+    );
+
+    PushNotification.localNotification({
+      title: 'Testing',
+      message: 'Checking if notifications work',
+      channelId: '1',
+    });
+
+    PushNotification.localNotificationSchedule({
+      title: 'Testing schedule',
+      message: 'Came after 15 seconds',
+      date: new Date(Date.now() + 15 * 1000),
+      allowWhileIdle: true,
+      channelId: '1',
+    });
+
     showAddTaskModal();
   };
 
