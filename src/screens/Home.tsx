@@ -221,7 +221,10 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               : toIsoDateTime(presentDateString, newTask.time),
           );
 
-          if (combinedDateTime.getTime() > new Date().getTime()) {
+          const presentTime = new Date().getTime();
+          const taskTime = combinedDateTime.getTime();
+
+          if (taskTime > presentTime) {
             PushNotification.createChannel(
               {
                 channelId: newTask.id,
@@ -232,26 +235,30 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               created => console.log(`createChannel returned '${created}'`),
             );
 
-            PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: newTask.task,
-              date: new Date(combinedDateTime.getTime() - 30 * 60 * 1000),
-              allowWhileIdle: true,
-              channelId: newTask.id,
-            });
+            if (taskTime > presentTime + 30 * 60 * 1000) {
+              PushNotification.localNotificationSchedule({
+                title: newTask.task,
+                message: 'Task Reminder - 30 minutes to go!',
+                date: new Date(taskTime - 30 * 60 * 1000),
+                allowWhileIdle: true,
+                channelId: newTask.id,
+              });
+            }
+
+            if (taskTime > presentTime + 5 * 60 * 1000) {
+              PushNotification.localNotificationSchedule({
+                title: newTask.task,
+                message: 'Task Reminder - 5 minutes to go!',
+                date: new Date(taskTime - 5 * 60 * 1000),
+                allowWhileIdle: true,
+                channelId: newTask.id,
+              });
+            }
 
             PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: newTask.task,
-              date: new Date(combinedDateTime.getTime() - 5 * 60 * 1000),
-              allowWhileIdle: true,
-              channelId: newTask.id,
-            });
-
-            PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: newTask.task,
-              date: new Date(combinedDateTime.getTime()),
+              title: newTask.task,
+              message: `Task Reminder - ${newTask.time}`,
+              date: new Date(taskTime),
               allowWhileIdle: true,
               channelId: newTask.id,
             });
@@ -310,7 +317,10 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               : toIsoDateTime(presentDateString, editedTask.time),
           );
 
-          if (combinedDateTime.getTime() > new Date().getTime()) {
+          const presentTime = new Date().getTime();
+          const taskTime = combinedDateTime.getTime();
+
+          if (taskTime > presentTime) {
             PushNotification.deleteChannel(editedTask.id);
 
             PushNotification.createChannel(
@@ -323,26 +333,30 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               created => console.log(`createChannel returned '${created}'`),
             );
 
-            PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: editedTask.task,
-              date: new Date(combinedDateTime.getTime() - 30 * 60 * 1000),
-              allowWhileIdle: true,
-              channelId: editedTask.id,
-            });
+            if (taskTime > presentTime + 30 * 60 * 1000) {
+              PushNotification.localNotificationSchedule({
+                title: editedTask.task,
+                message: 'Task Reminder - 30 minutes to go!',
+                date: new Date(taskTime - 30 * 60 * 1000),
+                allowWhileIdle: true,
+                channelId: editedTask.id,
+              });
+            }
+
+            if (taskTime > presentTime + 5 * 60 * 1000) {
+              PushNotification.localNotificationSchedule({
+                title: editedTask.task,
+                message: 'Task Reminder - 5 minutes to go!',
+                date: new Date(taskTime - 5 * 60 * 1000),
+                allowWhileIdle: true,
+                channelId: editedTask.id,
+              });
+            }
 
             PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: editedTask.task,
-              date: new Date(combinedDateTime.getTime() - 5 * 60 * 1000),
-              allowWhileIdle: true,
-              channelId: editedTask.id,
-            });
-
-            PushNotification.localNotificationSchedule({
-              title: 'Task Reminder',
-              message: editedTask.task,
-              date: new Date(combinedDateTime.getTime()),
+              title: editedTask.task,
+              message: `Task Reminder - ${editedTask.time}`,
+              date: new Date(taskTime),
               allowWhileIdle: true,
               channelId: editedTask.id,
             });
