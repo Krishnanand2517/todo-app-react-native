@@ -243,6 +243,14 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
   const onDeleteButtonPressed = async () => {
     if (onDeleteCategory !== undefined && taskCategory !== 'All Tasks') {
+      tasks.map(item => {
+        PushNotification.channelExists(item.id, exists => {
+          if (exists) {
+            PushNotification.deleteChannel(item.id);
+          }
+        });
+      });
+
       await AsyncStorage.removeItem(taskCategory);
       await onDeleteCategory(taskCategory);
     }
