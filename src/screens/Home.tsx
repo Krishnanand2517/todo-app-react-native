@@ -11,6 +11,7 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Snackbar, Portal, Modal} from 'react-native-paper';
+import PushNotification from 'react-native-push-notification';
 import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 
 import {RootTabsPropList} from '../App';
@@ -18,7 +19,6 @@ import {RootTabsPropList} from '../App';
 import TasksList from '../components/TasksList';
 import AddTask from './AddTask';
 import EditTask from './EditTask';
-import PushNotification from 'react-native-push-notification';
 
 type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
@@ -98,6 +98,71 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     fetchTasks();
   }, [isFocused, taskCategory]);
 
+  const getMonthIndex = (month: string) => {
+    const months = {
+      jan: 0,
+      feb: 1,
+      mar: 2,
+      apr: 3,
+      may: 4,
+      jun: 5,
+      jul: 6,
+      aug: 7,
+      sept: 8,
+      oct: 9,
+      nov: 10,
+      dec: 11,
+    };
+    const monthIndex = months[month];
+    if (monthIndex === undefined) {
+      throw new Error('Invalid month name');
+    }
+    return monthIndex;
+  };
+
+  const toIsoDateTime = (dateString: string, timeString: string) => {
+    // Parse the date string
+    const dateParts = dateString.split(' ');
+    if (dateParts.length !== 3) {
+      throw new Error('Invalid date format. Expected format: DD Month YYYY');
+    }
+    const day = parseInt(dateParts[0], 10);
+    const month = dateParts[1].toLowerCase();
+    const year = parseInt(dateParts[2], 10);
+
+    // Parse the time string
+    let hours;
+    let minutes;
+
+    if (timeString) {
+      const timeParts = timeString.split(':');
+      if (timeParts.length !== 2) {
+        throw new Error('Invalid time format. Expected format: HH:mm');
+      }
+      hours = parseInt(timeParts[0], 10);
+      minutes = parseInt(timeParts[1], 10);
+
+      // Handle Meridiem (AM/PM)
+      const meridiem = timeString.slice(-2).toLowerCase();
+      if (meridiem === 'pm' && hours !== 12) {
+        hours += 12;
+      } else if (meridiem === 'am' && hours === 12) {
+        hours = 0;
+      } else if (meridiem !== 'am' && meridiem !== 'pm') {
+        throw new Error(
+          'Invalid time format. Missing or invalid meridiem (AM/PM)',
+        );
+      }
+    } else {
+      hours = 0;
+      minutes = 0;
+    }
+
+    // Create and format the ISO 8601 DateTime
+    const date = new Date(year, getMonthIndex(month), day, hours, minutes);
+    return date.toISOString();
+  };
+
   const showAddTaskModal = () => setIsAddTaskModalVisible(true);
   const hideAddTaskModal = () => setIsAddTaskModalVisible(false);
 
@@ -108,28 +173,6 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   };
 
   const onAddButtonPressed = () => {
-    PushNotification.createChannel(
-      {
-        channelId: '1',
-        channelName: 'add',
-      },
-      created => console.log(`createChannel returned '${created}'`),
-    );
-
-    PushNotification.localNotification({
-      title: 'Testing',
-      message: 'Checking if notifications work',
-      channelId: '1',
-    });
-
-    PushNotification.localNotificationSchedule({
-      title: 'Testing schedule',
-      message: 'Came after 15 seconds',
-      date: new Date(Date.now() + 15 * 1000),
-      allowWhileIdle: true,
-      channelId: '1',
-    });
-
     showAddTaskModal();
   };
 
@@ -161,6 +204,59 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setTasks(updatedTasks);
+
+        if (newTask.date || newTask.time) {
+          const presentDateString = new Date()
+            .toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+            .split('-')
+            .join(' ');
+
+          const combinedDateTime: Date = new Date(
+            newTask.date
+              ? toIsoDateTime(newTask.date, newTask.time)
+              : toIsoDateTime(presentDateString, newTask.time),
+          );
+
+          if (combinedDateTime.getTime() > new Date().getTime()) {
+            PushNotification.createChannel(
+              {
+                channelId: newTask.id,
+                channelName: 'todoAppNotification',
+                playSound: true,
+                vibrate: true,
+              },
+              created => console.log(`createChannel returned '${created}'`),
+            );
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: newTask.task,
+              date: new Date(combinedDateTime.getTime() - 30 * 60 * 1000),
+              allowWhileIdle: true,
+              channelId: newTask.id,
+            });
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: newTask.task,
+              date: new Date(combinedDateTime.getTime() - 5 * 60 * 1000),
+              allowWhileIdle: true,
+              channelId: newTask.id,
+            });
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: newTask.task,
+              date: new Date(combinedDateTime.getTime()),
+              allowWhileIdle: true,
+              channelId: newTask.id,
+            });
+          }
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -215,6 +311,9 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         setDeletedTask(tasks.find((item: Task) => item.id === taskId));
         setDeletedTaskIndex(taskIndex);
         setTasks(updatedTasks);
+
+        PushNotification.deleteChannel(taskId);
+
         setIsSnackbarVisible(true);
       }
     } catch (error) {
