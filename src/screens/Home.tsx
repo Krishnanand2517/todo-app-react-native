@@ -354,6 +354,11 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
         setTasks(updatedTasks);
+
+        if (deletedTask.date || deletedTask.time) {
+          addNotification(deletedTask);
+        }
+
         setDeletedTask(undefined);
         setDeletedTaskIndex(undefined);
       }
@@ -371,6 +376,16 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
       );
 
       AsyncStorage.setItem(taskCategory, JSON.stringify(updatedTasks));
+
+      const task = tasks.find(item => item.id === taskId);
+
+      if (task?.date || task?.time) {
+        if (task.completed) {
+          addNotification(task);
+        } else {
+          PushNotification.deleteChannel(taskId);
+        }
+      }
 
       setTasks(updatedTasks);
     } catch (error) {
