@@ -4,7 +4,6 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PushNotification from 'react-native-push-notification';
 
 import Home from './screens/Home';
 import AddCategory from './screens/AddCategory';
@@ -69,16 +68,6 @@ const App = (): React.JSX.Element => {
 
     fetchCategories();
     SplashScreen.hide();
-
-    PushNotification.createChannel(
-      {
-        channelId: '1',
-        channelName: 'todoAppNotification',
-        playSound: true,
-        vibrate: true,
-      },
-      created => console.log(`createChannel returned '${created}'`),
-    );
   }, []);
 
   const onAddCategory = async (category: string) => {
