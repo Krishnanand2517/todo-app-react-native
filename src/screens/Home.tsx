@@ -293,6 +293,61 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setTasks(updatedTasks);
+
+        if (editedTask.date || editedTask.time) {
+          const presentDateString = new Date()
+            .toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+            .split('-')
+            .join(' ');
+
+          const combinedDateTime: Date = new Date(
+            editedTask.date
+              ? toIsoDateTime(editedTask.date, editedTask.time)
+              : toIsoDateTime(presentDateString, editedTask.time),
+          );
+
+          if (combinedDateTime.getTime() > new Date().getTime()) {
+            PushNotification.deleteChannel(editedTask.id);
+
+            PushNotification.createChannel(
+              {
+                channelId: editedTask.id,
+                channelName: 'todoAppNotification',
+                playSound: true,
+                vibrate: true,
+              },
+              created => console.log(`createChannel returned '${created}'`),
+            );
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: editedTask.task,
+              date: new Date(combinedDateTime.getTime() - 30 * 60 * 1000),
+              allowWhileIdle: true,
+              channelId: editedTask.id,
+            });
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: editedTask.task,
+              date: new Date(combinedDateTime.getTime() - 5 * 60 * 1000),
+              allowWhileIdle: true,
+              channelId: editedTask.id,
+            });
+
+            PushNotification.localNotificationSchedule({
+              title: 'Task Reminder',
+              message: editedTask.task,
+              date: new Date(combinedDateTime.getTime()),
+              allowWhileIdle: true,
+              channelId: editedTask.id,
+            });
+          }
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
