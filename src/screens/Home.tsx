@@ -11,7 +11,13 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Snackbar, Portal, Modal} from 'react-native-paper';
-import PushNotification, {Importance} from 'react-native-push-notification';
+import notifee, {
+  AlarmType,
+  AndroidImportance,
+  AndroidNotificationSetting,
+  TimestampTrigger,
+  TriggerType,
+} from '@notifee/react-native';
 import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 
 import {RootTabsPropList} from '../App';
@@ -159,7 +165,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     return date.toISOString();
   };
 
-  const addNotification = (newTask: Task) => {
+  const addNotification = async (newTask: EditableTask) => {
     const presentDateString = new Date()
       .toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -178,61 +184,107 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     const presentTime = new Date().getTime();
     const taskTime = combinedDateTime.getTime();
 
-    if (taskTime > presentTime) {
-      PushNotification.createChannel(
-        {
-          channelId: newTask.id,
-          channelName: 'todoAppNotification',
-          playSound: true,
-          soundName: 'alarm_clock_short.mp3',
-          vibrate: true,
-          importance: Importance.HIGH,
-        },
-        created => console.log(`createChannel returned '${created}'`),
-      );
+    let triggerHour: TimestampTrigger;
+    let triggerFiveMin: TimestampTrigger;
+    let triggerFinal: TimestampTrigger;
 
-      if (taskTime > presentTime + 30 * 60 * 1000) {
-        PushNotification.localNotificationSchedule({
-          title: newTask.task,
-          message: 'Task Reminder - 30 minutes to go!',
-          date: new Date(taskTime - 30 * 60 * 1000),
-          allowWhileIdle: true,
-          channelId: newTask.id,
-          soundName: 'default',
-          smallIcon: 'todo_icon_small',
-          largeIcon: 'todo_icon',
-        });
+    const settings = await notifee.getNotificationSettings();
+    if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
+      triggerHour = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: new Date(taskTime - 60 * 60 * 1000).getTime(),
+        alarmManager: {
+          type: AlarmType.SET_AND_ALLOW_WHILE_IDLE,
+        },
+      };
+
+      triggerFiveMin = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: new Date(taskTime - 5 * 60 * 1000).getTime(),
+        alarmManager: {
+          type: AlarmType.SET_AND_ALLOW_WHILE_IDLE,
+        },
+      };
+
+      triggerFinal = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: taskTime,
+        alarmManager: {
+          type: AlarmType.SET_ALARM_CLOCK,
+        },
+      };
+    } else {
+      await notifee.openAlarmPermissionSettings();
+    }
+
+    if (taskTime > presentTime) {
+      const channelId = await notifee.createChannel({
+        id: newTask.id,
+        name: newTask.task,
+        bypassDnd: true,
+        sound: 'default',
+        importance: AndroidImportance.HIGH,
+      });
+
+      if (taskTime > presentTime + 60 * 60 * 1000) {
+        await notifee.createTriggerNotification(
+          {
+            title: newTask.task,
+            body: 'Task Reminder - 1 hour to go!',
+            android: {
+              channelId,
+              smallIcon: 'todo_icon_small',
+              largeIcon: 'todo_icon',
+              color: '#5CFAB2',
+              pressAction: {
+                id: newTask.id,
+              },
+            },
+          },
+          triggerHour,
+        );
       }
 
       if (taskTime > presentTime + 5 * 60 * 1000) {
-        PushNotification.localNotificationSchedule({
-          title: newTask.task,
-          message: 'Task Reminder - 5 minutes to go!',
-          date: new Date(taskTime - 5 * 60 * 1000),
-          allowWhileIdle: true,
-          channelId: newTask.id,
-          soundName: 'default',
-          smallIcon: 'todo_icon_small',
-          largeIcon: 'todo_icon',
-        });
+        await notifee.createTriggerNotification(
+          {
+            title: newTask.task,
+            body: 'Task Reminder - 5 minutes to go!',
+            android: {
+              channelId,
+              smallIcon: 'todo_icon_small',
+              largeIcon: 'todo_icon',
+              color: '#5CFAB2',
+              pressAction: {
+                id: newTask.id,
+              },
+            },
+          },
+          triggerFiveMin,
+        );
       }
 
-      PushNotification.localNotificationSchedule({
-        title: newTask.task,
-        message: `Task Reminder - ${newTask.time}`,
-        date: new Date(taskTime),
-        allowWhileIdle: true,
-        channelId: newTask.id,
-        vibration: 10000,
-        color: '#5CFAB2',
-        smallIcon: 'todo_icon_small',
-        largeIcon: 'todo_icon',
-      });
+      await notifee.createTriggerNotification(
+        {
+          title: newTask.task,
+          body: `Task Reminder - ${newTask.time}`,
+          android: {
+            channelId,
+            smallIcon: 'todo_icon_small',
+            largeIcon: 'todo_icon',
+            color: '#5CFAB2',
+            pressAction: {
+              id: newTask.id,
+            },
+          },
+        },
+        triggerFinal,
+      );
     }
   };
 
   const editNotification = (editedTask: EditableTask) => {
-    PushNotification.deleteChannel(editedTask.id);
+    notifee.deleteChannel(editedTask.id);
     addNotification(editedTask);
   };
 
