@@ -11,7 +11,7 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Snackbar, Portal, Modal} from 'react-native-paper';
-import PushNotification from 'react-native-push-notification';
+import PushNotification, {Importance} from 'react-native-push-notification';
 import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 
 import {RootTabsPropList} from '../App';
@@ -184,7 +184,9 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
           channelId: newTask.id,
           channelName: 'todoAppNotification',
           playSound: true,
+          soundName: 'alarm_clock_short.mp3',
           vibrate: true,
+          importance: Importance.HIGH,
         },
         created => console.log(`createChannel returned '${created}'`),
       );
@@ -196,6 +198,9 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
           date: new Date(taskTime - 30 * 60 * 1000),
           allowWhileIdle: true,
           channelId: newTask.id,
+          soundName: 'default',
+          smallIcon: 'todo_icon_small',
+          largeIcon: 'todo_icon',
         });
       }
 
@@ -206,6 +211,9 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
           date: new Date(taskTime - 5 * 60 * 1000),
           allowWhileIdle: true,
           channelId: newTask.id,
+          soundName: 'default',
+          smallIcon: 'todo_icon_small',
+          largeIcon: 'todo_icon',
         });
       }
 
@@ -215,6 +223,10 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         date: new Date(taskTime),
         allowWhileIdle: true,
         channelId: newTask.id,
+        vibration: 10000,
+        color: '#5CFAB2',
+        smallIcon: 'todo_icon_small',
+        largeIcon: 'todo_icon',
       });
     }
   };
