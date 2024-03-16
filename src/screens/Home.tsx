@@ -159,6 +159,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         name: newTask.task,
         bypassDnd: true,
         sound: 'default',
+        vibrationPattern: [300, 500, 500, 500, 700, 500],
         importance: AndroidImportance.HIGH,
       });
 
@@ -171,6 +172,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               channelId,
               smallIcon: 'todo_icon_small',
               largeIcon: 'todo_icon',
+              showTimestamp: true,
               color: '#5CFAB2',
               pressAction: {
                 id: newTask.id,
@@ -190,6 +192,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               channelId,
               smallIcon: 'todo_icon_small',
               largeIcon: 'todo_icon',
+              showTimestamp: true,
               color: '#5CFAB2',
               pressAction: {
                 id: newTask.id,
@@ -208,6 +211,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
             channelId,
             smallIcon: 'todo_icon_small',
             largeIcon: 'todo_icon',
+            showTimestamp: true,
             color: '#5CFAB2',
             pressAction: {
               id: newTask.id,
