@@ -26,6 +26,7 @@ import {toIsoDateTime} from '../utils/dateFunctions';
 import TasksList from '../components/TasksList';
 import AddTask from './modals/AddTask';
 import EditTask from './modals/EditTask';
+import DeleteCategoryConfirm from './modals/DeleteCategoryConfirm';
 
 type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
@@ -73,6 +74,8 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
   const [isEditTaskModalVisible, setIsEditTaskModalVisible] = useState(false);
+  const [isDeleteCategoryModalVisible, setIsDeleteCategoryModalVisible] =
+    useState(false);
 
   const [deletedTask, setDeletedTask] = useState<Task>();
   const [deletedTaskIndex, setDeletedTaskIndex] = useState<number>();
@@ -240,11 +243,20 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     setSelectedTask(undefined);
   };
 
+  const showDeleteCategoryModal = () => setIsDeleteCategoryModalVisible(true);
+  const hideDeleteCategoryModal = () => setIsDeleteCategoryModalVisible(false);
+
   const onAddButtonPressed = () => {
     showAddTaskModal();
   };
 
-  const onDeleteButtonPressed = async () => {
+  const onDeleteButtonPressed = () => {
+    showDeleteCategoryModal();
+  };
+
+  const onDeleteCategoryConfirm = async () => {
+    hideDeleteCategoryModal();
+
     if (onDeleteCategory !== undefined && taskCategory !== 'My Tasks') {
       tasks.map(item => {
         notifee.deleteChannel(item.id);
@@ -406,6 +418,18 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     <SafeAreaView style={styles.screen}>
       <Portal>
         <Modal
+          visible={isDeleteCategoryModalVisible}
+          onDismiss={hideDeleteCategoryModal}
+          contentContainerStyle={styles.deleteCategoryModalContent}>
+          <DeleteCategoryConfirm
+            hideDeleteCategoryModal={hideDeleteCategoryModal}
+            onDelete={onDeleteCategoryConfirm}
+          />
+        </Modal>
+      </Portal>
+
+      <Portal>
+        <Modal
           visible={isAddTaskModalVisible}
           onDismiss={hideAddTaskModal}
           contentContainerStyle={styles.modalContent}>
@@ -474,6 +498,10 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     height: 320,
+    marginHorizontal: 24,
+  },
+  deleteCategoryModalContent: {
+    height: 200,
     marginHorizontal: 24,
   },
   container: {
