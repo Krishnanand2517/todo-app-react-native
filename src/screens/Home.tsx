@@ -176,6 +176,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               color: '#5CFAB2',
               pressAction: {
                 id: newTask.id,
+                launchActivity: 'default',
               },
             },
           },
@@ -196,6 +197,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               color: '#5CFAB2',
               pressAction: {
                 id: newTask.id,
+                launchActivity: 'default',
               },
             },
           },
@@ -215,6 +217,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
             color: '#5CFAB2',
             pressAction: {
               id: newTask.id,
+              launchActivity: 'default',
             },
           },
         },

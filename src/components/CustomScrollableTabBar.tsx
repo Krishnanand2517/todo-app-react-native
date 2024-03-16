@@ -12,7 +12,7 @@ const CustomScrollableTabBar = ({
 
   useEffect(() => {
     if (scrollViewRef.current) {
-      const tabWidth = 120;
+      const tabWidth = 80;
       const offset = state.index * tabWidth;
       scrollViewRef.current.scrollTo({x: offset, animated: true});
     }

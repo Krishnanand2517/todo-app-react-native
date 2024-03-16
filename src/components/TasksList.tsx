@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 24,
     paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 14,
   },
   noTaskText: {
     fontSize: 16,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 24,
     paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 14,
   },
   noCompletedText: {
     fontSize: 14,
