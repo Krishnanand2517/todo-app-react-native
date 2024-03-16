@@ -274,6 +274,7 @@ const styles = StyleSheet.create({
   taskText: {
     fontSize: 16,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
   deleteIconWrapper: {
     justifyContent: 'center',
@@ -292,6 +293,7 @@ const styles = StyleSheet.create({
   dateTimeText: {
     fontSize: 12,
     color: '#3D4654',
+    fontFamily: 'NunitoSans-Light',
   },
   completedSection: {
     marginTop: 48,
@@ -303,7 +305,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     marginHorizontal: 24,
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'NunitoSans-Bold',
     color: '#2B2D42',
   },
   noTaskTextWrapper: {
@@ -320,6 +322,7 @@ const styles = StyleSheet.create({
   noTaskText: {
     fontSize: 18,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
   noCompletedTextWrapper: {
     marginTop: 48,
@@ -336,5 +339,6 @@ const styles = StyleSheet.create({
   noCompletedText: {
     fontSize: 14,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
 });

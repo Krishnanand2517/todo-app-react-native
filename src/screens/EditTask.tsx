@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontWeight: '600',
     fontSize: 24,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Bold',
   },
   button: {
     backgroundColor: '#33B249',
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
   dateTimeButtonsWrapper: {
     marginTop: 24,
@@ -230,8 +231,8 @@ const styles = StyleSheet.create({
   dateTimeButtonText: {
     fontSize: 14,
     color: '#FFFFFF',
-    fontWeight: '600',
     textTransform: 'uppercase',
+    fontFamily: 'NunitoSans-Bold',
   },
   dateTimeSection: {
     flexDirection: 'row',
@@ -250,6 +251,7 @@ const styles = StyleSheet.create({
   dateTimeText: {
     fontSize: 14,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
   actionButtonsWrapper: {
     marginTop: 24,
@@ -262,11 +264,11 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: 'tomato',
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'NunitoSans-SemiBold',
   },
   saveButtonText: {
     color: '#33B249',
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'NunitoSans-SemiBold',
   },
 });

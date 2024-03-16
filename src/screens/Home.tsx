@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: 'tomato',
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'NunitoSans-SemiBold',
   },
   button: {
     position: 'absolute',
@@ -568,8 +568,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 35,
     borderWidth: 2,
-    borderRightWidth: 3,
-    borderBottomWidth: 4,
+    // borderRightWidth: 3,
+    // borderBottomWidth: 4,
     borderColor: '#000',
     shadowColor: '#33B249',
     elevation: 10,

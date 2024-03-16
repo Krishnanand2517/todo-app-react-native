@@ -92,9 +92,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headingText: {
-    fontWeight: '600',
     fontSize: 18,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Bold',
   },
   addButton: {
     backgroundColor: '#33B249',
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#FFF',
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'NunitoSans-Bold',
   },
   inputWrapper: {
     marginTop: 24,
@@ -123,5 +123,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     color: '#2B2D42',
+    fontFamily: 'NunitoSans-Regular',
   },
 });

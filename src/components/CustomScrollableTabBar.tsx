@@ -109,11 +109,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 32,
     fontSize: 18,
-    fontWeight: '600',
     color: '#000',
+    fontFamily: 'NunitoSans-Bold',
   },
   tabTextSelected: {
-    fontWeight: '700',
+    fontFamily: 'NunitoSans-Bold',
     borderBottomWidth: 3,
     borderBottomColor: '#000',
     borderBottomLeftRadius: 48,
