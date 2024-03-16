@@ -63,7 +63,7 @@ const DeleteButton = ({
 const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   const isFocused = useIsFocused();
 
-  const taskCategory = route.params?.taskCategory || 'All Tasks';
+  const taskCategory = route.params?.taskCategory || 'My Tasks';
   const onDeleteCategory = route.params?.onDeleteCategory;
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -302,7 +302,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   };
 
   const onDeleteButtonPressed = async () => {
-    if (onDeleteCategory !== undefined && taskCategory !== 'All Tasks') {
+    if (onDeleteCategory !== undefined && taskCategory !== 'My Tasks') {
       tasks.map(item => {
         notifee.deleteChannel(item.id);
       });
@@ -491,11 +491,13 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {taskCategory !== 'All Tasks' && (
-            <View style={styles.headWrapper}>
+          {taskCategory !== 'My Tasks' ? (
+            <View style={styles.deleteButtonWrapper}>
               {/* <Text style={styles.headingText}>Tasks</Text> */}
               <DeleteButton onDeleteButtonPressed={onDeleteButtonPressed} />
             </View>
+          ) : (
+            <View style={styles.emptyWrapper} />
           )}
 
           <TasksList
@@ -534,11 +536,14 @@ const styles = StyleSheet.create({
   container: {
     // marginTop: 64,
   },
-  headWrapper: {
+  deleteButtonWrapper: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 24,
+  },
+  emptyWrapper: {
+    marginVertical: 18,
   },
   headingText: {
     fontWeight: '700',

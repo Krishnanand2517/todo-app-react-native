@@ -35,7 +35,7 @@ const AddCategoryScreen = ({
 };
 
 const App = (): React.JSX.Element => {
-  const [categories, setCategories] = useState<string[]>(['All Tasks']);
+  const [categories, setCategories] = useState<string[]>(['My Tasks']);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -46,7 +46,7 @@ const App = (): React.JSX.Element => {
         if (value !== null) {
           allCategories = JSON.parse(value);
         } else {
-          allCategories = ['All Tasks'];
+          allCategories = ['My Tasks'];
           await AsyncStorage.setItem(
             'categories',
             JSON.stringify(allCategories),
@@ -117,7 +117,7 @@ const App = (): React.JSX.Element => {
               tabBarScrollEnabled: true,
               tabBarItemStyle: {width: 120},
             }}
-            initialRouteName="All Tasks">
+            initialRouteName="My Tasks">
             {categories.map(category => (
               <Tab.Screen
                 key={category}
