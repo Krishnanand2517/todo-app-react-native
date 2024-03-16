@@ -24,8 +24,8 @@ import {RootTabsPropList} from '../App';
 import {toIsoDateTime} from '../utils/dateFunctions';
 
 import TasksList from '../components/TasksList';
-import AddTask from './AddTask';
-import EditTask from './EditTask';
+import AddTask from './modals/AddTask';
+import EditTask from './modals/EditTask';
 
 type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 

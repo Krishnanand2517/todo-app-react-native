@@ -10,7 +10,7 @@ import {
 import uuid from 'react-native-uuid';
 import DatePicker from 'react-native-date-picker';
 
-import {bgColors} from '../data/taskItemBgColors';
+import {bgColors} from '../../data/taskItemBgColors';
 
 interface AddTaskProps {
   hideAddTaskModal: () => void;
