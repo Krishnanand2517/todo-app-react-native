@@ -12,6 +12,8 @@ import {
 import {Swipeable} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 
+import {toIsoDateTime} from '../utils/dateFunctions';
+
 type TaskItemProps = {
   index: number;
   id: string;
@@ -80,6 +82,24 @@ const TaskItem = ({
     );
   };
 
+  const displayDateText = () => {
+    if (date) {
+      const today: Date = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+
+      const combinedDateTime: Date = new Date(toIsoDateTime(date, time));
+
+      if (combinedDateTime.toDateString() === today.toDateString()) {
+        return 'Today';
+      } else if (combinedDateTime.toDateString() === tomorrow.toDateString()) {
+        return 'Tomorrow';
+      } else {
+        return date;
+      }
+    }
+  };
+
   return (
     <Swipeable
       renderLeftActions={(_progress, dragX) => renderActions(dragX, 'left')}
@@ -125,7 +145,7 @@ const TaskItem = ({
             </Text>
             {(date || time) && (
               <View style={styles.dateTimeWrapper}>
-                <Text style={styles.dateTimeText}>{date}</Text>
+                <Text style={styles.dateTimeText}>{displayDateText()}</Text>
                 <Text style={styles.dateTimeText}>{time}</Text>
               </View>
             )}
