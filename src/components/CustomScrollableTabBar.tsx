@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     paddingVertical: 8,
     paddingHorizontal: 32,
-    fontSize: 18,
+    fontSize: 16,
     color: '#000',
     fontFamily: 'NunitoSans-Bold',
   },

@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   noTaskText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
   },
