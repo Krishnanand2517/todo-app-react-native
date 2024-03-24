@@ -8,6 +8,8 @@ import {
   TextInput,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import uuid from 'react-native-uuid';
+import notifee from '@notifee/react-native';
 
 interface EditTaskProps {
   task: Task;
@@ -61,16 +63,20 @@ const EditTask = ({
   const [timeModalOpen, setTimeModalOpen] = useState(false);
 
   const onSaveButtonPressed = async () => {
+    const oldChannelId = task.channelId;
+
     if (taskContent !== '') {
       const editedTask: EditableTask = {
         id: task.id,
         task: taskContent,
+        channelId: uuid.v4().toString(),
         date,
         time,
       };
 
       onSave(editedTask);
       hideEditTaskModal();
+      notifee.deleteChannel(oldChannelId);
     }
   };
 

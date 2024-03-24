@@ -20,6 +20,7 @@ type TaskItemProps = {
   bgColor: string;
   completed: boolean;
   category: string;
+  channelId: string;
   date: string | undefined;
   time: string | undefined;
   onTaskItemPressed: (task: Task) => void;
@@ -34,6 +35,7 @@ const TaskItem = ({
   bgColor,
   completed,
   category,
+  channelId,
   date,
   time,
   onTaskItemPressed,
@@ -113,6 +115,7 @@ const TaskItem = ({
               bgColor,
               completed,
               category,
+              channelId,
               date,
               time,
             })

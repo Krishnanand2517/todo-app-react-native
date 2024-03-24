@@ -74,6 +74,7 @@ const AddTask = ({
         task: taskContent,
         bgColor: randomColor,
         completed: false,
+        channelId: uuid.v4().toString(),
         category: taskCategory,
         date,
         time,

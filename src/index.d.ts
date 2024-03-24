@@ -4,6 +4,7 @@ interface Task {
   bgColor: string;
   completed: boolean;
   category: string;
+  channelId: string;
   date?: string;
   time?: string;
 }

@@ -157,8 +157,10 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     }
 
     if (taskTime > presentTime) {
+      console.log(newTask.channelId);
+
       const channelId = await notifee.createChannel({
-        id: newTask.id,
+        id: newTask.channelId,
         name: newTask.task,
         bypassDnd: true,
         sound: 'default',
@@ -230,7 +232,9 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   };
 
   const editNotification = (editedTask: EditableTask) => {
-    notifee.deleteChannel(editedTask.id);
+    console.log(editedTask.channelId);
+
+    // notifee.deleteChannel(editedTask.channelId);
     addNotification(editedTask);
   };
 
