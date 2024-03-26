@@ -105,18 +105,24 @@ const EditTask = ({
           <View style={styles.dateTimeSection}>
             <AddDateButton onAddDateButtonPressed={onAddDateButtonPressed} />
             {date && (
-              <View style={styles.dateTimeTextWrapper}>
+              <TouchableOpacity
+                style={styles.dateTimeTextWrapper}
+                onPress={onAddDateButtonPressed}
+                activeOpacity={0.7}>
                 <Text style={styles.dateTimeText}>{date}</Text>
-              </View>
+              </TouchableOpacity>
             )}
           </View>
 
           <View style={styles.dateTimeSection}>
             <AddTimeButton onAddTimeButtonPressed={onAddTimeButtonPressed} />
             {time && (
-              <View style={styles.dateTimeTextWrapper}>
+              <TouchableOpacity
+                style={styles.dateTimeTextWrapper}
+                onPress={onAddTimeButtonPressed}
+                activeOpacity={0.7}>
                 <Text style={styles.dateTimeText}>{time}</Text>
-              </View>
+              </TouchableOpacity>
             )}
           </View>
 
