@@ -1,15 +1,35 @@
 import React, {useRef, useState} from 'react';
 import {StyleSheet, View, TouchableOpacity, Animated} from 'react-native';
 
-const DarkModeToggleSwitch = (): React.JSX.Element => {
-  const animation = React.useRef(new Animated.Value(0)).current;
-  const dayOpacity = useRef(new Animated.Value(1)).current;
-  const nightOpacity = useRef(new Animated.Value(0)).current;
+interface DarkModeToggleSwitchProps {
+  theme: 'light' | 'dark' | null | undefined;
+  setTheme: React.Dispatch<
+    React.SetStateAction<'light' | 'dark' | null | undefined>
+  >;
+}
 
-  const [isDay, setIsDay] = useState(true);
+const DarkModeToggleSwitch = ({
+  theme,
+  setTheme,
+}: DarkModeToggleSwitchProps): React.JSX.Element => {
+  let animationValue = 0;
+  let dayOpacityValue = 1,
+    nightOpacityValue = 0;
+  if (theme === 'dark') {
+    animationValue = 32;
+    dayOpacityValue = 0;
+    nightOpacityValue = 1;
+  }
+
+  const animation = useRef(new Animated.Value(animationValue)).current;
+  const dayOpacity = useRef(new Animated.Value(dayOpacityValue)).current;
+  const nightOpacity = useRef(new Animated.Value(nightOpacityValue)).current;
+
+  const [isDay, setIsDay] = useState(theme === 'light');
 
   const toggleAnimation = () => {
     setIsDay(!isDay);
+    setTheme(theme === 'light' ? 'dark' : 'light');
 
     Animated.parallel([
       Animated.timing(animation, {

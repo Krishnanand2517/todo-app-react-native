@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   LayoutAnimation,
+  Appearance,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -68,6 +69,8 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
 
   const taskCategory = route.params?.taskCategory || 'My Tasks';
   const onDeleteCategory = route.params?.onDeleteCategory;
+
+  const [theme, setTheme] = useState(Appearance.getColorScheme());
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task>();
@@ -470,7 +473,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
             </View>
           ) : (
             // <View style={styles.emptyWrapper} />
-            <DarkModeToggleSwitch />
+            <DarkModeToggleSwitch theme={theme} setTheme={setTheme} />
           )}
 
           <TasksList
