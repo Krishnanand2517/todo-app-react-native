@@ -1,17 +1,11 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useContext} from 'react';
 import {StyleSheet, View, TouchableOpacity, Animated} from 'react-native';
 
-interface DarkModeToggleSwitchProps {
-  theme: 'light' | 'dark' | null | undefined;
-  setTheme: React.Dispatch<
-    React.SetStateAction<'light' | 'dark' | null | undefined>
-  >;
-}
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 
-const DarkModeToggleSwitch = ({
-  theme,
-  setTheme,
-}: DarkModeToggleSwitchProps): React.JSX.Element => {
+const DarkModeToggleSwitch = (): React.JSX.Element => {
+  const {theme, setTheme} = useContext(ThemeContext) as ThemeContextType;
+
   let animationValue = 0;
   let dayOpacityValue = 1,
     nightOpacityValue = 0;
@@ -92,10 +86,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
   },
   darkButton: {
     backgroundColor: '#000',
+    borderColor: '#FFF',
   },
   icon: {
     width: 20,

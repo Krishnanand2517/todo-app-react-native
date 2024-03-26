@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   LayoutAnimation,
-  Appearance,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +23,7 @@ import {MaterialTopTabScreenProps} from '@react-navigation/material-top-tabs';
 import {RootTabsPropList} from '../App';
 import {toIsoDateTime} from '../utils/dateFunctions';
 
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 import TasksList from '../components/TasksList';
 import AddTask from './modals/AddTask';
 import EditTask from './modals/EditTask';
@@ -34,16 +34,21 @@ type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
 interface AddButtonProps {
   onAddButtonPressed: () => void;
+  theme: 'light' | 'dark' | null | undefined;
 }
 
 interface DeleteButtonProps {
   onDeleteButtonPressed: () => void;
+  theme: 'light' | 'dark' | null | undefined;
 }
 
-const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
+const AddButton = ({
+  onAddButtonPressed,
+  theme,
+}: AddButtonProps): React.JSX.Element => {
   return (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, theme === 'dark' && styles.buttonDark]}
       onPress={onAddButtonPressed}
       activeOpacity={0.7}>
       <Text style={styles.buttonText}>+</Text>
@@ -53,13 +58,20 @@ const AddButton = ({onAddButtonPressed}: AddButtonProps): React.JSX.Element => {
 
 const DeleteButton = ({
   onDeleteButtonPressed,
+  theme,
 }: DeleteButtonProps): React.JSX.Element => {
   return (
     <TouchableOpacity
       style={styles.deleteButton}
       onPress={onDeleteButtonPressed}
       activeOpacity={0.7}>
-      <Text style={styles.deleteButtonText}>Delete List</Text>
+      <Text
+        style={[
+          styles.deleteButtonText,
+          theme === 'dark' && styles.deleteButtonTextDark,
+        ]}>
+        Delete List
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -70,7 +82,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   const taskCategory = route.params?.taskCategory || 'My Tasks';
   const onDeleteCategory = route.params?.onDeleteCategory;
 
-  const [theme, setTheme] = useState(Appearance.getColorScheme());
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task>();
@@ -423,7 +435,8 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView
+      style={[styles.screen, theme === 'dark' && styles.darkScreen]}>
       <Portal>
         <Modal
           visible={isDeleteCategoryModalVisible}
@@ -469,11 +482,14 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
           {taskCategory !== 'My Tasks' ? (
             <View style={styles.deleteButtonWrapper}>
               {/* <Text style={styles.headingText}>Tasks</Text> */}
-              <DeleteButton onDeleteButtonPressed={onDeleteButtonPressed} />
+              <DeleteButton
+                onDeleteButtonPressed={onDeleteButtonPressed}
+                theme={theme}
+              />
             </View>
           ) : (
             // <View style={styles.emptyWrapper} />
-            <DarkModeToggleSwitch theme={theme} setTheme={setTheme} />
+            <DarkModeToggleSwitch />
           )}
 
           <TasksList
@@ -485,7 +501,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         </View>
       </ScrollView>
 
-      <AddButton onAddButtonPressed={onAddButtonPressed} />
+      <AddButton onAddButtonPressed={onAddButtonPressed} theme={theme} />
 
       <Snackbar
         visible={isSnackbarVisible}
@@ -504,6 +520,9 @@ const styles = StyleSheet.create({
   screen: {
     height: '100%',
     backgroundColor: '#FFF6E9',
+  },
+  darkScreen: {
+    backgroundColor: '#121212',
   },
   modalContent: {
     height: 320,
@@ -530,6 +549,10 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: '#2B2D42',
   },
+  headingTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
+  },
   deleteButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -542,6 +565,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'NunitoSans-SemiBold',
   },
+  deleteButtonTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
+  },
   button: {
     position: 'absolute',
     bottom: 20,
@@ -553,11 +580,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 35,
     borderWidth: 2,
-    // borderRightWidth: 3,
-    // borderBottomWidth: 4,
     borderColor: '#000',
     shadowColor: '#33B249',
     elevation: 10,
+  },
+  buttonDark: {
+    borderColor: '#FFF',
   },
   buttonText: {
     fontSize: 32,

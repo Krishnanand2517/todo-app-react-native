@@ -5,6 +5,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import ThemeContextProvider from './context/ThemeContextProvider';
 import Home from './screens/Home';
 import AddCategory from './screens/AddCategory';
 import {PaperProvider} from 'react-native-paper';
@@ -108,33 +109,38 @@ const App = (): React.JSX.Element => {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <PaperProvider>
-        <NavigationContainer>
-          <Tab.Navigator
-            tabBar={props => <CustomScrollableTabBar {...props} />}
-            screenOptions={{
-              tabBarBounces: true,
-              tabBarScrollEnabled: true,
-              tabBarItemStyle: {width: 120},
-            }}
-            initialRouteName="My Tasks">
-            {categories.map(category => (
+      <ThemeContextProvider>
+        <PaperProvider>
+          <NavigationContainer>
+            <Tab.Navigator
+              tabBar={props => <CustomScrollableTabBar {...props} />}
+              screenOptions={{
+                tabBarBounces: true,
+                tabBarScrollEnabled: true,
+                tabBarItemStyle: {width: 120},
+              }}
+              initialRouteName="My Tasks">
+              {categories.map(category => (
+                <Tab.Screen
+                  key={category}
+                  name={category}
+                  component={Home}
+                  initialParams={{
+                    taskCategory: category,
+                    onDeleteCategory,
+                  }}
+                />
+              ))}
               <Tab.Screen
-                key={category}
-                name={category}
-                component={Home}
-                initialParams={{taskCategory: category, onDeleteCategory}}
+                name="AddCategory"
+                component={AddCategoryScreen}
+                options={{tabBarLabel: ' + '}}
+                initialParams={{onAddCategory}}
               />
-            ))}
-            <Tab.Screen
-              name="AddCategory"
-              component={AddCategoryScreen}
-              options={{tabBarLabel: ' + '}}
-              initialParams={{onAddCategory}}
-            />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+            </Tab.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </ThemeContextProvider>
     </GestureHandlerRootView>
   );
 };

@@ -6,8 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 
 interface AddCategoryProps {
   onAddCategory: (category: string) => Promise<void>;
@@ -15,6 +17,8 @@ interface AddCategoryProps {
 }
 
 const AddCategory = ({onAddCategory, navigation}: AddCategoryProps) => {
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
+
   const [category, setCategory] = useState('');
   const [isEmpty, setIsEmpty] = useState(true);
   const [isDuplicate, setIsDuplicate] = useState(false);
@@ -48,10 +52,17 @@ const AddCategory = ({onAddCategory, navigation}: AddCategoryProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView
+      style={[styles.screen, theme === 'dark' && styles.screenDark]}>
       <View style={styles.container}>
         <View style={styles.headWrapper}>
-          <Text style={styles.headingText}>Add a New Category</Text>
+          <Text
+            style={[
+              styles.headingText,
+              theme === 'dark' && styles.headingTextDark,
+            ]}>
+            Add a New Category
+          </Text>
           <TouchableOpacity
             style={[
               styles.addButton,
@@ -66,7 +77,10 @@ const AddCategory = ({onAddCategory, navigation}: AddCategoryProps) => {
 
         <View style={styles.inputWrapper}>
           <TextInput
-            style={styles.categoryInput}
+            style={[
+              styles.categoryInput,
+              theme === 'dark' && styles.categoryInputDark,
+            ]}
             value={category}
             onChangeText={setCategory}
           />
@@ -83,6 +97,9 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#FFF6E9',
   },
+  screenDark: {
+    backgroundColor: '#121212',
+  },
   container: {
     margin: 24,
   },
@@ -95,6 +112,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Bold',
+  },
+  headingTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
   addButton: {
     backgroundColor: '#33B249',
@@ -117,12 +138,17 @@ const styles = StyleSheet.create({
   },
   categoryInput: {
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: '#000',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 16,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
+  },
+  categoryInputDark: {
+    borderColor: '#FFF',
+    color: '#FFF',
+    opacity: 0.87,
   },
 });

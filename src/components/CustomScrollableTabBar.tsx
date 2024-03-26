@@ -1,6 +1,8 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useContext} from 'react';
 import {Animated, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
 import {MaterialTopTabBarProps} from '@react-navigation/material-top-tabs';
+
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 
 const CustomScrollableTabBar = ({
   state,
@@ -8,6 +10,8 @@ const CustomScrollableTabBar = ({
   navigation,
   position,
 }: MaterialTopTabBarProps): React.JSX.Element => {
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
+
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -24,7 +28,10 @@ const CustomScrollableTabBar = ({
       horizontal
       showsHorizontalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
-      style={styles.tabBarWrapper}
+      style={[
+        styles.tabBarWrapper,
+        theme === 'dark' && styles.tabBarWrapperDark,
+      ]}
       contentContainerStyle={styles.tabBarContentContainer}>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
@@ -81,6 +88,8 @@ const CustomScrollableTabBar = ({
                 styles.tabText,
                 isFocused && styles.tabTextSelected,
                 {opacity},
+                theme === 'dark' && styles.tabTextDark,
+                isFocused && theme === 'dark' && styles.tabTextSelectedDark,
               ]}>
               {label}
             </Animated.Text>
@@ -101,6 +110,9 @@ const styles = StyleSheet.create({
     // borderBottomColor: '#000',
     backgroundColor: '#FFF6E9',
   },
+  tabBarWrapperDark: {
+    backgroundColor: '#121212',
+  },
   tabBarContentContainer: {
     alignItems: 'center',
   },
@@ -112,11 +124,18 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'NunitoSans-Bold',
   },
+  tabTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
+  },
   tabTextSelected: {
     fontFamily: 'NunitoSans-Bold',
     borderBottomWidth: 3,
     borderBottomColor: '#000',
     borderBottomLeftRadius: 48,
     borderBottomRightRadius: 48,
+  },
+  tabTextSelectedDark: {
+    borderBottomColor: '#FFF',
   },
 });
