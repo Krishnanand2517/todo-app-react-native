@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text, View, FlatList, LayoutAnimation} from 'react-native';
 
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 import TaskItem from './TaskItem';
 
 interface TasksListProps {
@@ -16,6 +17,8 @@ const TasksList = ({
   onDelete,
   onToggleComplete,
 }: TasksListProps): React.JSX.Element => {
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
+
   const incompleteTasks = tasks.filter(task => task.completed === false);
   const completedTasks = tasks.filter(task => task.completed === true);
 
@@ -80,8 +83,18 @@ const TasksList = ({
         </View>
       )}
 
-      <View style={styles.completedSection}>
-        <Text style={styles.completedHeader}>Completed</Text>
+      <View
+        style={[
+          styles.completedSection,
+          theme === 'dark' && styles.completedSectionDark,
+        ]}>
+        <Text
+          style={[
+            styles.completedHeader,
+            theme === 'dark' && styles.completedHeaderDark,
+          ]}>
+          Completed
+        </Text>
         {completedTasks.length > 0 ? (
           <FlatList
             data={completedTasks}
@@ -107,7 +120,11 @@ const TasksList = ({
           />
         ) : (
           <View style={styles.noCompletedTextWrapper}>
-            <Text style={styles.noCompletedText}>
+            <Text
+              style={[
+                styles.noCompletedText,
+                theme === 'dark' && styles.noCompletedTextDark,
+              ]}>
               Still waiting for you to complete your tasks...
             </Text>
           </View>
@@ -129,12 +146,19 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#D3D3D3',
   },
+  completedSectionDark: {
+    borderTopColor: '#2B2B2B',
+  },
   completedHeader: {
     marginVertical: 12,
     marginHorizontal: 24,
     fontSize: 20,
     fontFamily: 'NunitoSans-Bold',
     color: '#2B2D42',
+  },
+  completedHeaderDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
   noTaskTextWrapper: {
     marginTop: 48,
@@ -168,5 +192,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
+  },
+  noCompletedTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
 });

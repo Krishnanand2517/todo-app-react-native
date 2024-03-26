@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,7 @@ import {Swipeable} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 
 import {toIsoDateTime} from '../utils/dateFunctions';
+import ThemeContext, {ThemeContextType} from '../context/ThemeContext';
 
 type TaskItemProps = {
   index: number;
@@ -42,6 +43,8 @@ const TaskItem = ({
   handleDelete,
   handleTaskCirclePress,
 }: TaskItemProps): React.JSX.Element => {
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
+
   const swipeAnim = useRef(new Animated.Value(0)).current;
 
   const onSwipeableWillOpen = (direction: 'left' | 'right') => {
@@ -107,6 +110,7 @@ const TaskItem = ({
             styles.taskItem,
             {backgroundColor: bgColor},
             completed && {opacity: 0.6},
+            theme === 'dark' && styles.taskItemDark,
           ]}
           onPress={() =>
             onTaskItemPressed({
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRightWidth: 3,
     borderBottomWidth: 4,
-    borderColor: '#000000',
+    borderColor: '#000',
     borderRadius: 16,
     marginVertical: 12,
     marginHorizontal: 24,
@@ -176,6 +180,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 2,
+  },
+  taskItemDark: {
+    borderColor: '#FFF',
   },
   taskCompleteCircle: {
     paddingVertical: 6,

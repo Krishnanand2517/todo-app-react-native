@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   LayoutAnimation,
+  StatusBar,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -437,6 +438,10 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
   return (
     <SafeAreaView
       style={[styles.screen, theme === 'dark' && styles.darkScreen]}>
+      <StatusBar
+        barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={theme === 'dark' ? '#121212' : '#FFF6E9'}
+      />
       <Portal>
         <Modal
           visible={isDeleteCategoryModalVisible}
