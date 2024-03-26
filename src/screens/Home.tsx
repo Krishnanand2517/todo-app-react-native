@@ -27,6 +27,7 @@ import TasksList from '../components/TasksList';
 import AddTask from './modals/AddTask';
 import EditTask from './modals/EditTask';
 import DeleteCategoryConfirm from './modals/DeleteCategoryConfirm';
+import DarkModeToggleSwitch from '../components/DarkModeToggleSwitch';
 
 type CategoryProps = MaterialTopTabScreenProps<RootTabsPropList>;
 
@@ -468,7 +469,8 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
               <DeleteButton onDeleteButtonPressed={onDeleteButtonPressed} />
             </View>
           ) : (
-            <View style={styles.emptyWrapper} />
+            // <View style={styles.emptyWrapper} />
+            <DarkModeToggleSwitch />
           )}
 
           <TasksList
