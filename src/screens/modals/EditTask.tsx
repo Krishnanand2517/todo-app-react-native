@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,6 +10,8 @@ import {
 import DatePicker from 'react-native-date-picker';
 import uuid from 'react-native-uuid';
 import notifee from '@notifee/react-native';
+
+import ThemeContext, {ThemeContextType} from '../../context/ThemeContext';
 
 interface EditTaskProps {
   task: Task;
@@ -56,6 +58,8 @@ const EditTask = ({
   hideEditTaskModal,
   onSave,
 }: EditTaskProps): React.JSX.Element => {
+  const {theme} = useContext(ThemeContext) as ThemeContextType;
+
   const [taskContent, setTaskContent] = useState(task.task);
   const [date, setDate] = useState(task.date);
   const [time, setTime] = useState(task.time);
@@ -88,14 +92,21 @@ const EditTask = ({
   const onAddTimeButtonPressed = () => setTimeModalOpen(true);
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView
+      style={[styles.screen, theme === 'dark' && styles.screenDark]}>
       <View style={styles.container}>
         <View style={styles.headWrapper}>
-          <Text style={styles.headingText}>Edit Task</Text>
+          <Text
+            style={[
+              styles.headingText,
+              theme === 'dark' && styles.headingTextDark,
+            ]}>
+            Edit Task
+          </Text>
         </View>
         <View style={styles.taskInputWrapper}>
           <TextInput
-            style={styles.taskInput}
+            style={[styles.taskInput, theme === 'dark' && styles.taskInputDark]}
             value={taskContent}
             onChangeText={setTaskContent}
           />
@@ -109,7 +120,13 @@ const EditTask = ({
                 style={styles.dateTimeTextWrapper}
                 onPress={onAddDateButtonPressed}
                 activeOpacity={0.7}>
-                <Text style={styles.dateTimeText}>{date}</Text>
+                <Text
+                  style={[
+                    styles.dateTimeText,
+                    theme === 'dark' && styles.dateTimeTextDark,
+                  ]}>
+                  {date}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -121,7 +138,13 @@ const EditTask = ({
                 style={styles.dateTimeTextWrapper}
                 onPress={onAddTimeButtonPressed}
                 activeOpacity={0.7}>
-                <Text style={styles.dateTimeText}>{time}</Text>
+                <Text
+                  style={[
+                    styles.dateTimeText,
+                    theme === 'dark' && styles.dateTimeTextDark,
+                  ]}>
+                  {time}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -195,6 +218,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 16,
   },
+  screenDark: {
+    backgroundColor: '#121212',
+  },
   container: {
     marginVertical: 24,
     paddingHorizontal: 24,
@@ -208,6 +234,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Bold',
+  },
+  headingTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
   button: {
     backgroundColor: '#33B249',
@@ -228,6 +258,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
+  },
+  taskInputDark: {
+    borderColor: '#FFF',
+    color: '#FFF',
+    opacity: 0.87,
   },
   dateTimeButtonsWrapper: {
     marginTop: 24,
@@ -264,6 +299,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
+  },
+  dateTimeTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
   actionButtonsWrapper: {
     marginTop: 24,

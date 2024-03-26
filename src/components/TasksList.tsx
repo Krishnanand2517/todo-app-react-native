@@ -77,7 +77,11 @@ const TasksList = ({
         />
       ) : (
         <View style={styles.noTaskTextWrapper}>
-          <Text style={styles.noTaskText}>
+          <Text
+            style={[
+              styles.noTaskText,
+              theme === 'dark' && styles.noTaskTextDark,
+            ]}>
             {'No tasks here.\nAdd one by pressing the green button!'}
           </Text>
         </View>
@@ -175,6 +179,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2B2D42',
     fontFamily: 'NunitoSans-Regular',
+  },
+  noTaskTextDark: {
+    color: '#FFF',
+    opacity: 0.87,
   },
   noCompletedTextWrapper: {
     marginTop: 48,
