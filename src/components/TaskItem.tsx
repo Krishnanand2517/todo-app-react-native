@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     columnGap: 2,
   },
   taskItemDark: {
-    borderColor: '#FFF',
+    borderColor: '#000',
   },
   taskCompleteCircle: {
     paddingVertical: 6,

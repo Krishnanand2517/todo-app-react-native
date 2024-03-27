@@ -174,8 +174,6 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
     }
 
     if (taskTime > presentTime) {
-      console.log(newTask.channelId);
-
       const channelId = await notifee.createChannel({
         id: newTask.channelId,
         name: newTask.task,
@@ -246,13 +244,6 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         triggerFinal,
       );
     }
-  };
-
-  const editNotification = (editedTask: EditableTask) => {
-    console.log(editedTask.channelId);
-
-    // notifee.deleteChannel(editedTask.channelId);
-    addNotification(editedTask);
   };
 
   const showAddTaskModal = () => setIsAddTaskModalVisible(true);
@@ -351,7 +342,7 @@ const Home = ({navigation, route}: CategoryProps): React.JSX.Element => {
         setTasks(updatedTasks);
 
         if (editedTask.date || editedTask.time) {
-          editNotification(editedTask);
+          addNotification(editedTask);
         }
       }
     } catch (error) {
